@@ -11,13 +11,10 @@ export function useStatus() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // GitHub API returns base64 encoded content without aggressive caching
+        // GitHub API returns content without aggressive caching (no custom headers needed for CORS)
         const response = await fetch(API_URL, {
           headers: {
-            'Accept': 'application/vnd.github.v3+json',
-            // Add cache control headers
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache'
+            'Accept': 'application/vnd.github.v3+json'
           }
         });
         
