@@ -1,1 +1,5 @@
 *heartbeat*
+
+# Environment variables
+web/.env
+.env
