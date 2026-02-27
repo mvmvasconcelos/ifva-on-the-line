@@ -24,7 +24,7 @@ export function StatsGrid({ history, lastSeen }) {
 
   const cards = [
     {
-      title: "Última Verificação",
+      title: "Último Sinal Recebido",
       value: lastSeen ? new Date(lastSeen).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}) : "--:--",
       icon: <Clock className="w-5 h-5 text-blue-500" />,
       desc: "Autalizado a cada 5 min"
