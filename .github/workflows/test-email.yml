@@ -23,6 +23,12 @@ jobs:
           BODY=$(jq -r '.config.email_template.body // "Este é um e-mail de teste."' data/status.json)
           LAST_SEEN=$(jq -r '.last_seen' data/status.json)
           
+          # Check if emails list is not empty
+          if [ -z "$EMAILS" ]; then
+            echo "❌ Nenhum e-mail configurado na lista de alertas!"
+            exit 1
+          fi
+          
           # Replace variables in body
           BODY="${BODY//\{last_seen\}/$LAST_SEEN}"
           BODY="${BODY//\{elapsed_time\}/0 minutos (teste)}"
@@ -34,7 +40,9 @@ jobs:
           echo "subject=[TESTE] $SUBJECT" >> $GITHUB_OUTPUT
           
           # Save body to file for multiline handling
-          echo "$BODY" > /tmp/email_body.txt
+          echo -e "$BODY" > /tmp/email_body.txt
+          
+          echo "📧 Destinatários: $EMAILS"
 
       - name: Send test email
         uses: dawidd6/action-send-mail@v3
