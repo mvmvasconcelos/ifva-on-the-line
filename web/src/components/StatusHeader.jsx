@@ -1,8 +1,18 @@
 // web/src/components/StatusHeader.jsx
+import { useMemo } from "react";
 import { CheckCircle2, AlertTriangle, RefreshCw, Wifi, WifiOff } from "lucide-react";
 
 export function StatusHeader({ status, lastSeen }) {
-  const isOnline = status === "online";
+  // Calcula status real baseado no tempo desde o último heartbeat
+  const isOnline = useMemo(() => {
+    if (!lastSeen) return false;
+    const now = new Date();
+    const lastSeenDate = new Date(lastSeen);
+    const minutesSince = (now - lastSeenDate) / (1000 * 60);
+    const TIMEOUT_MINUTES = 7;
+    return minutesSince < TIMEOUT_MINUTES;
+  }, [lastSeen]);
+  
   const statusColor = isOnline ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
   
   const formattedDate = lastSeen 
