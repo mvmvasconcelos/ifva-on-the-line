@@ -12,8 +12,11 @@ A arquitetura do projeto é baseada em uma abordagem "serverless" utilizando rec
 
 1.  **Origem (No Campus):** Um script simples (`heartbeat.sh`) rodando em um servidor Linux dentro do campus envia uma requisição HTTP (POST) a cada 5 minutos para a API do GitHub.
 2.  **Backend (GitHub Actions):**
-    *   Um workflow recebe esse sinal e atualiza um arquivo JSON (`status.json`) com o carimbo de tempo da última conexão.
-    *   Um segundo workflow "cão de guarda" (watchdog) roda a cada 10 minutos. Ele verifica se o último sinal foi recebido recentemente. Se o atraso for superior a 7 minutos, ele marca o status como "offline" e envia um e-mail de alerta.
+    *   O workflow `Receive Heartbeat` recebe cada sinal e executa a lógica principal de detecção:
+        *   Atualiza o `last_seen` e confirma `status: online`.
+        *   Calcula o intervalo desde o sinal anterior. Se o gap for superior a 7 minutos, registra automaticamente um incidente no histórico com a duração calculada.
+        *   Quando o sistema se recupera de um estado offline, registra o fim do incidente com a duração exata da queda.
+    *   O workflow `Watchdog Monitor` roda periodicamente como **fallback**: se nenhum heartbeat chegar por um tempo prolongado, ele detecta a queda em andamento e dispara um alerta por e-mail.
 3.  **Frontend (Dashboard):** Uma interface web desenvolvida em React, hospedada no GitHub Pages, consome o arquivo JSON bruto para exibir o status atual (Online/Offline) e o histórico de incidentes em tempo real.
 
 ## Tecnologias Utilizadas

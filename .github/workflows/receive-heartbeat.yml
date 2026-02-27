@@ -1,4 +1,4 @@
-name: Receive Heartbeat
+name: Recebe Heartbeat
 
 on:
   repository_dispatch:
@@ -19,66 +19,73 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Update status file
+      - name: Processar heartbeat e detectar quedas
         run: |
           python -c "
           import json
           import datetime
           import sys
 
+          TIMEOUT_MINUTES = 7
           JSON_PATH = 'data/status.json'
+
+          def parse_time(ts):
+              if ts.endswith('Z'):
+                  return datetime.datetime.fromisoformat(ts.replace('Z', '+00:00'))
+              return datetime.datetime.fromisoformat(ts)
 
           try:
               with open(JSON_PATH, 'r') as f:
                   data = json.load(f)
 
-              # Current time UTC
               now = datetime.datetime.now(datetime.timezone.utc)
               now_iso = now.isoformat().replace('+00:00', 'Z')
+              last_seen_str = data.get('last_seen')
+              current_status = data.get('status', 'online')
 
-              current_status = data.get('status')
-              
-              # Se estava offline, precisamos calcular a duração da queda
-              if current_status == 'offline':
-                  print('System recovering from OFFLINE state.')
-                  
-                  if 'history' in data and len(data['history']) > 0:
-                      last_event = data['history'][0]
-                      
-                      # Verifica se é um evento de queda recente
-                      if last_event.get('type') == 'offline_detected' or last_event.get('type') == 'offline':
-                          try:
-                              event_time_str = last_event['timestamp']
-                              if event_time_str.endswith('Z'):
-                                  event_time = datetime.datetime.fromisoformat(event_time_str.replace('Z', '+00:00'))
-                              else:
-                                  event_time = datetime.datetime.fromisoformat(event_time_str)
-                              
-                              diff = now - event_time
-                              duration_minutes = diff.total_seconds() / 60
-                              
-                              # Atualiza a duração no evento histórico
-                              last_event['duration_minutes'] = duration_minutes
-                              print(f'Downtime duration updated: {duration_minutes:.2f} minutes')
-                          except Exception as e:
-                              print(f'Error calculating duration: {e}')
+              if 'history' not in data:
+                  data['history'] = []
+
+              if last_seen_str:
+                  last_seen = parse_time(last_seen_str)
+                  gap_minutes = (now - last_seen).total_seconds() / 60
+                  print(f'Gap desde ultimo sinal: {gap_minutes:.1f} minutos')
+
+                  # CASO 1: Estava online, mas o gap indica que houve queda que o watchdog nao pegou
+                  if current_status == 'online' and gap_minutes > TIMEOUT_MINUTES:
+                      print(f'Queda nao registrada detectada! Gap de {gap_minutes:.1f} min.')
+                      incidente = {
+                          'timestamp': last_seen_str,
+                          'type': 'offline_detected',
+                          'duration_minutes': round(gap_minutes, 1)
+                      }
+                      data['history'].insert(0, incidente)
+
+                  # CASO 2: Estava oficialmente offline (watchdog ja registrou) - atualiza a duracao
+                  elif current_status == 'offline':
+                      print('Recuperando de estado OFFLINE registrado pelo watchdog.')
+                      if len(data['history']) > 0:
+                          ultimo_evento = data['history'][0]
+                          if ultimo_evento.get('type') in ('offline_detected', 'offline'):
+                              evento_ts = parse_time(ultimo_evento['timestamp'])
+                              duracao = (now - evento_ts).total_seconds() / 60
+                              ultimo_evento['duration_minutes'] = round(duracao, 1)
+                              print(f'Duracao da queda atualizada: {duracao:.1f} min')
 
               # Atualiza status e last_seen
               data['last_seen'] = now_iso
               data['status'] = 'online'
-              
+
               with open(JSON_PATH, 'w') as f:
                   json.dump(data, f, indent=2)
-                  
-              print('Status updated to ONLINE.')
+
+              print('Status atualizado para ONLINE.')
+              print(json.dumps(data, indent=2))
 
           except Exception as e:
-              print(f'Error updating status: {e}')
+              print(f'Erro: {e}')
               sys.exit(1)
           "
-          
-          # Show the updated file content for debugging
-          cat data/status.json
 
       - name: Commit and push changes
         run: |

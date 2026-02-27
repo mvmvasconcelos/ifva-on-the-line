@@ -36,12 +36,15 @@ Este documento serve como guia para a construção de um sistema de monitorament
 ## 🟣 Fase 4: Automação com GitHub Actions
 
 - [x] **Workflow A (receive-heartbeat.yml):**
-    - Gatilho: `repository_dispatch`.
-    - Ação: Ler `status.json`, atualizar `last_seen`, definir `status: "online"`.
+    - Gatilho: `repository_dispatch` (heartbeat do campus).
+    - Lógica principal de detecção:
+        - Atualiza `last_seen` e define `status: "online"`.
+        - Calcula o gap desde o sinal anterior. Se `gap > 7 minutos`, registra incidente no histórico com duração calculada.
+        - Se estava `offline` (detectado pelo watchdog), calcula a duração exata e encerra o incidente.
     - Commit e Push automático das alterações no JSON.
 - [x] **Workflow B (watchdog.yml):**
-    - Gatilho: `schedule` (cron: `*/10 * * * *`).
-    - Lógica: Se `now - last_seen > 7 minutos`:
+    - Gatilho: `schedule` (cron: `*/15 * * * *`) — atua como fallback.
+    - Lógica: Se `now - last_seen > 7 minutos` e nenhum heartbeat chegou:
         - Atualizar `status: "offline"`.
         - Adicionar evento ao array `history`.
         - Disparar e-mail via SMTP (Gmail) com o alerta.
