@@ -14,13 +14,68 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
       - name: Update status file
         run: |
-          # Get current UTC timestamp
-          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          
-          # Update last_seen and status using jq (pre-installed on Ubuntu runners)
-          jq --arg new_time "$TIMESTAMP" '.last_seen = $new_time | .status = "online"' data/status.json > temp.json && mv temp.json data/status.json
+          python -c "
+          import json
+          import datetime
+          import sys
+
+          JSON_PATH = 'data/status.json'
+
+          try:
+              with open(JSON_PATH, 'r') as f:
+                  data = json.load(f)
+
+              # Current time UTC
+              now = datetime.datetime.now(datetime.timezone.utc)
+              now_iso = now.isoformat().replace('+00:00', 'Z')
+
+              current_status = data.get('status')
+              
+              # Se estava offline, precisamos calcular a duração da queda
+              if current_status == 'offline':
+                  print('System recovering from OFFLINE state.')
+                  
+                  if 'history' in data and len(data['history']) > 0:
+                      last_event = data['history'][0]
+                      
+                      # Verifica se é um evento de queda recente
+                      if last_event.get('type') == 'offline_detected' or last_event.get('type') == 'offline':
+                          try:
+                              event_time_str = last_event['timestamp']
+                              if event_time_str.endswith('Z'):
+                                  event_time = datetime.datetime.fromisoformat(event_time_str.replace('Z', '+00:00'))
+                              else:
+                                  event_time = datetime.datetime.fromisoformat(event_time_str)
+                              
+                              diff = now - event_time
+                              duration_minutes = diff.total_seconds() / 60
+                              
+                              # Atualiza a duração no evento histórico
+                              last_event['duration_minutes'] = duration_minutes
+                              print(f'Downtime duration updated: {duration_minutes:.2f} minutes')
+                          except Exception as e:
+                              print(f'Error calculating duration: {e}')
+
+              # Atualiza status e last_seen
+              data['last_seen'] = now_iso
+              data['status'] = 'online'
+              
+              with open(JSON_PATH, 'w') as f:
+                  json.dump(data, f, indent=2)
+                  
+              print('Status updated to ONLINE.')
+
+          except Exception as e:
+              print(f'Error updating status: {e}')
+              sys.exit(1)
+          "
           
           # Show the updated file content for debugging
           cat data/status.json
