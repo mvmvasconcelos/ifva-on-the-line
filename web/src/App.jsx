@@ -72,7 +72,10 @@ function App() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {event.duration_minutes ? `${Math.round(event.duration_minutes)} min` : '-'}
+                        {event.duration_minutes > 0
+                          ? `${Math.round(event.duration_minutes)} min`
+                          : <span className="text-orange-400 italic">Em andamento...</span>
+                        }
                       </td>
                     </tr>
                   ))
