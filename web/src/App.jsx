@@ -1,16 +1,13 @@
 // web/src/App.jsx
-import { useEffect, useState } from 'react'
 import { StatusHeader } from './components/StatusHeader'
 import { StatsGrid } from './components/StatsGrid'
 import { IncidentsChart } from './components/IncidentsChart'
-import { SettingsModal } from './components/SettingsModal'
 import { UptimeStats } from './components/UptimeStats'
 import { HeartbeatMonitor } from './components/HeartbeatMonitor'
 import { useStatus } from './hooks/useStatus'
 
 function App() {
   const { data, loading, error } = useStatus()
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
   if (loading) {
     return (
@@ -98,25 +95,7 @@ function App() {
           </div>
         </div>
 
-        {/* Settings Button */}
-        <div className="mt-8 flex justify-center">
-          <button
-            onClick={() => setIsSettingsOpen(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors shadow-md"
-          >
-            <span>⚙️</span>
-            <span>Configurações Avançadas</span>
-          </button>
-        </div>
-
       </div>
-      
-      {/* Settings Modal */}
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        config={data?.config}
-      />
       
       <footer className="mt-12 text-center text-gray-400 text-sm pb-8">
         &copy; {new Date().getFullYear()} IFSul Venâncio Aires - Sistema de Monitoramento | Atualização automática a cada 60s
