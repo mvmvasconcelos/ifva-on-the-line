@@ -27,8 +27,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: "npm"
-          cache-dependency-path: web/package-lock.json
+          # Cache requires package-lock.json which is not present initially
+          # cache: "npm"
+          # cache-dependency-path: web/package-lock.json
 
       # If package-lock.json doesn't exist yet (first run), we might need to generate it or use install
       - name: Install Dependencies

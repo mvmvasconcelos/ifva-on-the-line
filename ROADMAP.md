@@ -4,7 +4,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
 
 ## 🟢 Fase 1: Setup Inicial e Segurança
 
-- [ ] Criar repositório público no GitHub: `ifva-on-the-line`.
+- [x] Criar repositório público no GitHub: `ifva-on-the-line`.
 - [ ] Gerar um **Personal Access Token (PAT)** com permissão de `repo` e `workflow`.
 - [ ] Configurar **GitHub Secrets** (Settings > Secrets > Actions):
     - `PAT_TOKEN`: O token gerado acima.
@@ -14,7 +14,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
 
 ## 🟡 Fase 2: O "Banco de Dados" (JSON)
 
-- [ ] Criar arquivo `data/status.json` com a estrutura inicial:
+- [x] Criar arquivo `data/status.json` com a estrutura inicial:
 
 ```json
 {
@@ -27,7 +27,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
 
 ## 🔵 Fase 3: Script do Firewall (Lado do Campus)
 
-- [ ] Criar script Bash `heartbeat.sh` para o Linux do campus:
+- [x] Criar script Bash `heartbeat.sh` para o Linux do campus:
     - Deve enviar um POST para a API do GitHub (`repository_dispatch`).
     - Payload: `{"event_type": "heartbeat"}`.
 - [ ] Configurar no `crontab -e`:
@@ -35,11 +35,11 @@ Este documento serve como guia para a construção de um sistema de monitorament
 
 ## 🟣 Fase 4: Automação com GitHub Actions
 
-- [ ] **Workflow A (receive-heartbeat.yml):**
+- [x] **Workflow A (receive-heartbeat.yml):**
     - Gatilho: `repository_dispatch`.
     - Ação: Ler `status.json`, atualizar `last_seen`, definir `status: "online"`.
     - Commit e Push automático das alterações no JSON.
-- [ ] **Workflow B (watchdog.yml):**
+- [x] **Workflow B (watchdog.yml):**
     - Gatilho: `schedule` (cron: `*/10 * * * *`).
     - Lógica: Se `now - last_seen > 7 minutos`:
         - Atualizar `status: "offline"`.
@@ -49,12 +49,12 @@ Este documento serve como guia para a construção de um sistema de monitorament
 
 ## 🟠 Fase 5: Frontend React (Dashboard)
 
-- [ ] Inicializar projeto React (Vite/CRA) com Tailwind CSS.
-- [ ] **Componentes Principais:**
+- [x] Inicializar projeto React (Vite/CRA) com Tailwind CSS.
+- [x] **Componentes Principais:**
     - `StatusHeader`: Mostra se está **ONLINE** (verde) ou **OFFLINE** (vermelho).
     - `StatsGrid`: Cards com "Último Check-in", "Tempo desde a última queda", "Total de falhas no mês".
     - `UptimeChart`: Gráfico usando Recharts ou Chart.js baseado no histórico do JSON.
-- [ ] **Data Fetching:**
+- [x] **Data Fetching:**
     - Criar hook para consumir o `status.json` do GitHub Raw com cache busting (`?t=timestamp`).
 
 ## 🔴 Fase 6: Área Avançada (Configurações)

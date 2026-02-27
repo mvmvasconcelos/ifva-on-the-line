@@ -37,4 +37,4 @@ Para replicar este projeto, consulte o arquivo `ROADMAP.md` para um guia passo a
 
 ## Licença
 
-Este projeto está sob a licença MIT.
+Este projeto está sob a licença Apache 2.0.
