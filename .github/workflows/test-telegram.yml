@@ -1,0 +1,99 @@
+name: Test Telegram Notification
+
+on:
+  workflow_dispatch: # Manual trigger only
+
+permissions:
+  contents: read
+
+jobs:
+  send-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Send test Telegram message
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: |
+          python -c "
+          import json
+          import urllib.request
+          import urllib.parse
+          import datetime
+          import os
+
+          bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
+          
+          if not bot_token:
+              print('❌ TELEGRAM_BOT_TOKEN not configured')
+              exit(1)
+
+          # Read config from status.json
+          with open('data/status.json', 'r') as f:
+              data = json.load(f)
+          
+          telegram_config = data.get('config', {}).get('telegram', {})
+          
+          if not telegram_config.get('enabled', False):
+              print('❌ Telegram is disabled in status.json config')
+              exit(1)
+          
+          chat_ids = telegram_config.get('chat_ids', [])
+          
+          if not chat_ids:
+              print('❌ No chat_ids configured in status.json')
+              exit(1)
+
+          # Get current time in Brasilia
+          now = datetime.datetime.now(datetime.timezone.utc)
+          brasilia_tz = datetime.timezone(datetime.timedelta(hours=-3))
+          now_brasilia = now.astimezone(brasilia_tz)
+          
+          # Prepare test message
+          message = (
+              f'✅ *Teste de Notificação*\n\n'
+              f'🤖 *Bot:* IFVA On The Line\n'
+              f'🏫 *Sistema:* IFSul Venâncio Aires\n'
+              f'⏰ *Horário:* {now_brasilia.strftime(\"%d/%m/%Y às %H:%M:%S\")}\n'
+              f'🌎 *Timezone:* Horário de Brasília (UTC-3)\n\n'
+              f'Se você recebeu esta mensagem, o sistema de alertas via Telegram está funcionando corretamente! 🎉'
+          )
+          
+          base_url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+          
+          success_count = 0
+          for chat_id in chat_ids:
+              try:
+                  params = {
+                      'chat_id': chat_id,
+                      'text': message,
+                      'parse_mode': 'Markdown'
+                  }
+                  
+                  data_encoded = urllib.parse.urlencode(params).encode('utf-8')
+                  req = urllib.request.Request(base_url, data=data_encoded)
+                  
+                  with urllib.request.urlopen(req) as response:
+                      result = json.loads(response.read().decode('utf-8'))
+                      if result.get('ok'):
+                          print(f'✅ Telegram sent successfully to chat_id: {chat_id}')
+                          success_count += 1
+                      else:
+                          print(f'❌ Telegram error for {chat_id}: {result}')
+              except Exception as e:
+                  print(f'❌ Error sending to {chat_id}: {e}')
+          
+          if success_count > 0:
+              print(f'\n✅ Test completed! {success_count}/{len(chat_ids)} messages sent successfully.')
+          else:
+              print(f'\n❌ Test failed! No messages were sent.')
+              exit(1)
+          "

@@ -28,6 +28,12 @@
     "alert_emails": [
       "www.vasconcelos@gmail.com"
     ],
+    "telegram": {
+      "enabled": true,
+      "chat_ids": [
+        "343595545"
+      ]
+    },
     "email_template": {
       "subject": "\u26a0\ufe0f ALERTA: Sistema Offline",
       "body": "O sistema de monitoramento detectou que o campus est\u00e1 OFFLINE.\n\n\u00daltimo sinal recebido: {last_seen}\nTempo decorrido: {elapsed_time}\n\nPor favor, verifique a conectividade e energia do campus."
