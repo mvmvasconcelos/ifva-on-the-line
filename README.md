@@ -38,6 +38,36 @@ A arquitetura do projeto é baseada em uma abordagem "serverless" utilizando rec
 
 Para replicar este projeto, consulte o arquivo `ROADMAP.md` para um guia passo a passo da implementação, incluindo a configuração de segredos e tokens necessários.
 
+### Configurando Emails de Alerta
+
+As configurações de notificação são gerenciadas diretamente no arquivo `data/status.json`:
+
+```json
+{
+  "status": "online",
+  "last_seen": "2026-02-27T10:00:00Z",
+  "history": [],
+  "config": {
+    "alert_emails": [
+      "admin1@example.com",
+      "admin2@example.com"
+    ],
+    "email_template": {
+      "subject": "🔴 ALERTA: IFSul Offline",
+      "body": "O sistema IFSul Venâncio Aires está OFFLINE desde {last_seen}.\n\nTempo decorrido: {elapsed_time}\n\nPor favor, verifique a conectividade ou energia do campus."
+    }
+  }
+}
+```
+
+**Para modificar:**
+1. Edite o arquivo `data/status.json` diretamente no GitHub
+2. Ajuste os emails em `config.alert_emails` (array de strings)
+3. Personalize o assunto e corpo do email em `config.email_template`
+4. Os placeholders `{last_seen}` e `{elapsed_time}` são substituídos automaticamente
+
+As mudanças entram em vigor imediatamente após o commit.
+
 ## Licença
 
 Este projeto está sob a licença Apache 2.0.

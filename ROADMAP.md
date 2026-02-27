@@ -10,7 +10,6 @@ Este documento serve como guia para a construção de um sistema de monitorament
     - `PAT_TOKEN`: O token gerado acima.
     - `GMAIL_USER`: Seu e-mail do Gmail.
     - `GMAIL_APP_PASSWORD`: Senha de app gerada na conta Google.
-    - `ADMIN_PASSWORD_HASH`: Um hash SHA-256 da senha que você usará na área avançada.
 
 ## 🟡 Fase 2: O "Banco de Dados" (JSON)
 
@@ -20,10 +19,18 @@ Este documento serve como guia para a construção de um sistema de monitorament
 {
   "status": "online",
   "last_seen": "2026-02-27T10:00:00Z",
-  "last_failure": null,
-  "history": []
+  "history": [],
+  "config": {
+    "alert_emails": ["admin@example.com"],
+    "email_template": {
+      "subject": "🔴 ALERTA: IFSul Offline",
+      "body": "O sistema está offline desde {last_seen}..."
+    }
+  }
 }
 ```
+
+**Observação:** Para modificar os destinatários de e-mail ou personalizar o template, edite diretamente o arquivo `data/status.json` no GitHub.
 
 ## 🔵 Fase 3: Script do Firewall (Lado do Campus)
 
@@ -53,26 +60,36 @@ Este documento serve como guia para a construção de um sistema de monitorament
 
 ## 🟠 Fase 5: Frontend React (Dashboard)
 
-- [x] Inicializar projeto React (Vite/CRA) com Tailwind CSS.
+- [x] Inicializar projeto React (Vite) com Tailwind CSS.
 - [x] **Componentes Principais:**
-    - `StatusHeader`: Mostra se está **ONLINE** (verde) ou **OFFLINE** (vermelho).
+    - `StatusHeader`: Mostra se está **ONLINE** (verde) ou **OFFLINE** (vermelho) baseado no tempo real.
+    - `HeartbeatMonitor`: Monitor em tempo real com previsão do próximo heartbeat e indicador de saúde.
+    - `UptimeStats`: Estatísticas mensais de uptime com percentual e métricas de incidentes.
     - `StatsGrid`: Cards com "Último Check-in", "Tempo desde a última queda", "Total de falhas no mês".
-    - `UptimeChart`: Gráfico usando Recharts ou Chart.js baseado no histórico do JSON.
+    - `IncidentsChart`: Gráfico de incidentes usando Recharts baseado no histórico do JSON.
 - [x] **Data Fetching:**
-    - Criar hook para consumir o `status.json` do GitHub Raw com cache busting (`?t=timestamp`).
+    - Criar hook `useStatus` para consumir o `status.json` do GitHub Raw com cache busting (`?t=timestamp`).
+    - Auto-refresh a cada 60 segundos.
+- [x] **Animações e UX:**
+    - Animações customizadas (pulse-slow/medium/fast, spin-slow).
+    - Gradientes e indicadores visuais baseados em status.
+    - Design responsivo com Tailwind CSS.
 
-## � Fase 6: Área Avançada (Configurações)
+## 🚀 Fase 6: Deployment e Testes
 
-- [x] Criar modal de acesso protegido por senha (validando contra o hash).
-- [x] **Funcionalidades:**
-    - Input para editar lista de e-mails (salvar no JSON).
-    - Input para editar o template do e-mail de alerta.
-    - Botão "Testar Envio": Dispara um evento `test_email` para o GitHub Actions.
-- [x] Criar workflow `test-email.yml` para envio de e-mails de teste.
-- [ ] Implementar salvamento via GitHub API (atualmente manual).
+- [x] Configurar GitHub Pages via workflow `deploy-web.yml`.
+- [x] **Teste de Estresse:** Desligar o script no firewall e validar:
+    - [x] Sistema detecta offline após 7 minutos.
+    - [x] E-mail de alerta enviado automaticamente pelo watchdog.
+    - [x] Dashboard atualiza status para refletir offline.
+- [x] Validar responsividade do dashboard no mobile.
+- [x] Criar workflow `test-email.yml` para envio de e-mails de teste manual.
 
-## 🚀 Fase 7: Deployment e Testes
+## ✅ Sistema Completo e Operacional
 
-- [x] Configurar GitHub Pages para apontar para o build do React.
-- [ ] **Teste de Estresse:** Desligar o script no firewall e validar se o e-mail chega em até 10-15 minutos.
-- [ ] Validar responsividade do dashboard no mobile.
+O sistema está 100% funcional com:
+- ✅ Detecção automática de quedas
+- ✅ Alertas via e-mail (horário de Brasília)
+- ✅ Dashboard em tempo real com estatísticas avançadas
+- ✅ Monitoramento de heartbeat com previsões
+- ✅ Histórico completo de incidentes
