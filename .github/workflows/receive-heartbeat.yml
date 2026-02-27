@@ -35,6 +35,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "update: heartbeat received"
+            git commit -m "update: heartbeat recebido!"
             git push
           fi

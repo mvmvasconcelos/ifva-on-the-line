@@ -67,6 +67,6 @@ Este documento serve como guia para a construção de um sistema de monitorament
 
 ## 🚀 Fase 7: Deployment e Testes
 
-- [ ] Configurar GitHub Pages para apontar para o build do React.
+- [x] Configurar GitHub Pages para apontar para o build do React.
 - [ ] **Teste de Estresse:** Desligar o script no firewall e validar se o e-mail chega em até 10-15 minutos.
 - [ ] Validar responsividade do dashboard no mobile.
