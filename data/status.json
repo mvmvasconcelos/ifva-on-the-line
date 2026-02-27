@@ -2,28 +2,7 @@
   "status": "online",
   "last_seen": "2026-02-27T20:12:03.552850Z",
   "last_failure": null,
-  "history": [
-    {
-      "timestamp": "2026-02-27T18:38:06.512743Z",
-      "type": "offline_detected",
-      "duration_minutes": 3.8
-    },
-    {
-      "timestamp": "2026-02-27T17:39:47.657112Z",
-      "type": "offline_detected",
-      "duration_minutes": 21.2
-    },
-    {
-      "timestamp": "2026-02-27T15:09:31.796945Z",
-      "type": "offline_detected",
-      "duration_minutes": 17.1
-    },
-    {
-      "timestamp": "2026-02-27T12:54:10.342875Z",
-      "type": "offline_detected",
-      "duration_minutes": 31
-    }
-  ],
+  "history": [],
   "config": {
     "alert_emails": [
       "www.vasconcelos@gmail.com"

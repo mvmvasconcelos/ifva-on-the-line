@@ -10,6 +10,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
     - `PAT_TOKEN`: O token gerado acima.
     - `GMAIL_USER`: Seu e-mail do Gmail.
     - `GMAIL_APP_PASSWORD`: Senha de app gerada na conta Google.
+    - `TELEGRAM_BOT_TOKEN`: Token do bot criado via @BotFather.
 
 ## 🟡 Fase 2: O "Banco de Dados" (JSON)
 
@@ -22,6 +23,10 @@ Este documento serve como guia para a construção de um sistema de monitorament
   "history": [],
   "config": {
     "alert_emails": ["admin@example.com"],
+    "telegram": {
+      "enabled": true,
+      "chat_ids": ["123456789"]
+    },
     "email_template": {
       "subject": "🔴 ALERTA: IFSul Offline",
       "body": "O sistema está offline desde {last_seen}..."
@@ -30,7 +35,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
 }
 ```
 
-**Observação:** Para modificar os destinatários de e-mail ou personalizar o template, edite diretamente o arquivo `data/status.json` no GitHub.
+**Observação:** Para modificar os destinatários de e-mail/Telegram ou personalizar templates, edite diretamente o arquivo `data/status.json` no GitHub.
 
 ## 🔵 Fase 3: Script do Firewall (Lado do Campus)
 
@@ -51,11 +56,11 @@ Este documento serve como guia para a construção de um sistema de monitorament
         - Se estava `offline` (detectado pelo watchdog), calcula a duração exata e encerra o incidente.
     - Commit e Push automático das alterações no JSON.
 - [x] **Workflow B (watchdog.yml):**
-    - Gatilho: `schedule` (cron: `*/15 * * * *`) — atua como fallback.
-    - Lógica: Se `now - last_seen > 7 minutos` e nenhum heartbeat chegou:
+    - Gatilho: `schedule` (cron: `*/5 * * * *`) — atua como fallback.
+    - Lógica: Se `now - last_seen > 10 minutos` e nenhum heartbeat chegou:
         - Atualizar `status: "offline"`.
         - Adicionar evento ao array `history`.
-        - Disparar e-mail via SMTP (Gmail) com o alerta.
+        - Disparar alertas via Email (SMTP Gmail) e Telegram simultaneamente.
         - Commit e Push automático.
 
 ## 🟠 Fase 5: Frontend React (Dashboard)
@@ -68,8 +73,8 @@ Este documento serve como guia para a construção de um sistema de monitorament
     - `StatsGrid`: Cards com "Último Check-in", "Tempo desde a última queda", "Total de falhas no mês".
     - `IncidentsChart`: Gráfico de incidentes usando Recharts baseado no histórico do JSON.
 - [x] **Data Fetching:**
-    - Criar hook `useStatus` para consumir o `status.json` do GitHub Raw com cache busting (`?t=timestamp`).
-    - Auto-refresh a cada 60 segundos.
+    - Criar hook `useStatus` para consumir o `status.json` via GitHub API (evita cache).
+    - Auto-refresh a cada 30 segundos.
 - [x] **Animações e UX:**
     - Animações customizadas (pulse-slow/medium/fast, spin-slow).
     - Gradientes e indicadores visuais baseados em status.
@@ -79,17 +84,39 @@ Este documento serve como guia para a construção de um sistema de monitorament
 
 - [x] Configurar GitHub Pages via workflow `deploy-web.yml`.
 - [x] **Teste de Estresse:** Desligar o script no firewall e validar:
-    - [x] Sistema detecta offline após 7 minutos.
+    - [x] Sistema detecta offline após 10 minutos.
     - [x] E-mail de alerta enviado automaticamente pelo watchdog.
     - [x] Dashboard atualiza status para refletir offline.
 - [x] Validar responsividade do dashboard no mobile.
 - [x] Criar workflow `test-email.yml` para envio de e-mails de teste manual.
+
+## 📱 Fase 7: Notificações via Telegram
+
+- [x] Criar bot no Telegram via [@BotFather](https://t.me/botfather).
+- [x] Obter Chat ID via API: `https://api.telegram.org/bot<TOKEN>/getUpdates`
+- [x] Adicionar `TELEGRAM_BOT_TOKEN` aos GitHub Secrets.
+- [x] Implementar função `send_telegram()` no `watchdog.py`:
+    - Usa `urllib.request` para enviar mensagens via Bot API.
+    - Suporte a múltiplos chat IDs.
+    - Formatação Markdown com emojis.
+- [x] Atualizar `watchdog.yml` para passar `TELEGRAM_BOT_TOKEN`.
+- [x] Criar workflow `test-telegram.yml` para testes manuais.
+- [x] Configurar `data/status.json` com:
+    ```json
+    "telegram": {
+      "enabled": true,
+      "chat_ids": ["343595545"]
+    }
+    ```
+- [x] Validar sistema dual (Email + Telegram) em produção.
 
 ## ✅ Sistema Completo e Operacional
 
 O sistema está 100% funcional com:
 - ✅ Detecção automática de quedas
 - ✅ Alertas via e-mail (horário de Brasília)
+- ✅ Alertas via Telegram (instantâneos com formatação Markdown)
 - ✅ Dashboard em tempo real com estatísticas avançadas
 - ✅ Monitoramento de heartbeat com previsões
 - ✅ Histórico completo de incidentes
+- ✅ Sistema dual de notificações (Email + Telegram)
