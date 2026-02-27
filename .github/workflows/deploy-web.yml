@@ -1,0 +1,44 @@
+name: Deploy Web Dashboard
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "web/**" # Only change if web folder changes
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      # If package-lock.json doesn't exist yet (first run), we might need to generate it or use install
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: web/dist # The build output folder
+          branch: gh-pages # The branch the action should deploy to.
