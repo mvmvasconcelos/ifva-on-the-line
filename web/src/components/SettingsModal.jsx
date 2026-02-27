@@ -80,22 +80,62 @@ export function SettingsModal({ isOpen, onClose, config }) {
     try {
       const emailList = emails.split(',').map(e => e.trim()).filter(e => e)
       
-      const updatedConfig = {
-        alert_emails: emailList,
-        email_template: {
-          subject: emailSubject,
-          body: emailBody
-        }
+      if (emailList.length === 0) {
+        alert('❌ Por favor, adicione pelo menos um email.')
+        setIsSaving(false)
+        return
       }
 
-      // In a real implementation, this would commit to GitHub via API
-      // For now, we'll just show a success message
-      console.log('Saving config:', updatedConfig)
+      const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN
+      const GITHUB_REPO = import.meta.env.VITE_GITHUB_REPO
       
-      alert('⚠️ Funcionalidade de salvamento via API ainda não implementada.\n\nPor enquanto, você pode editar manualmente o arquivo data/status.json.')
+      if (!GITHUB_TOKEN || !GITHUB_REPO) {
+        alert('❌ Configuração incompleta. Variáveis VITE_GITHUB_TOKEN ou VITE_GITHUB_REPO não encontradas.')
+        console.error('Missing env vars:', { GITHUB_TOKEN: !!GITHUB_TOKEN, GITHUB_REPO })
+        setIsSaving(false)
+        return
+      }
+
+      console.log('🚀 Disparando workflow update-config...')
+      
+      // Trigger GitHub workflow
+      const response = await fetch(
+        `https://api.github.com/repos/${GITHUB_REPO}/actions/workflows/update-config.yml/dispatches`,
+        {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            'Authorization': `Bearer ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ref: 'main',
+            inputs: {
+              alert_emails: emailList.join(', '),
+              email_subject: emailSubject,
+              email_body: emailBody
+            }
+          })
+        }
+      )
+
+      if (response.ok || response.status === 204) {
+        alert('✅ Configurações salvas com sucesso!\n\nO GitHub Actions está processando a atualização.\nAs mudanças estarão visíveis em alguns segundos.')
+        console.log('✅ Workflow triggered successfully')
+        
+        // Reload after 3 seconds to show updated config
+        setTimeout(() => {
+          window.location.reload()
+        }, 3000)
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('GitHub API error:', response.status, errorData)
+        alert(`❌ Erro ao salvar: ${errorData.message || response.statusText}\n\nPor favor, edite manualmente o arquivo data/status.json.`)
+      }
       
     } catch (error) {
-      alert('Erro ao salvar configurações: ' + error.message)
+      console.error('Error saving config:', error)
+      alert('❌ Erro ao salvar configurações: ' + error.message)
     } finally {
       setIsSaving(false)
     }

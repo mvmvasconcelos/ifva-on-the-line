@@ -40,6 +40,7 @@ jobs:
         env:
           VITE_ADMIN_PASSWORD_HASH: ${{ secrets.VITE_ADMIN_PASSWORD_HASH }}
           VITE_GITHUB_REPO: mvmvasconcelos/ifva-on-the-line
+          VITE_GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

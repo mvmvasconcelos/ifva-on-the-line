@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration
-REPO_OWNER="YOUR_GITHUB_USERNAME"
+REPO_OWNER="mvmvasconcelos"
 REPO_NAME="ifva-on-the-line"
 PAT_TOKEN="YOUR_PAT_TOKEN" # This should ideally be an environment variable or secret
 
@@ -14,7 +14,7 @@ curl -X POST \
 
 # Check if the request was successful
 if [ $? -eq 0 ]; then
-  echo "Heartbeat sent successfully."
+  echo "Heartbeat enviado com sucesso! 💓"
 else
-  echo "Failed to send heartbeat."
+  echo "Falha ao enviar heartbeat."
 fi
