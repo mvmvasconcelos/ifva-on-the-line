@@ -1,33 +1,32 @@
 // web/src/components/StatsGrid.jsx
 import { Clock, Activity, WifiOff } from "lucide-react";
 
-export function StatsGrid({ history, lastSeen }) {
-  // Calculate specific metrics
-  const totalIncidents = history?.length || 0;
-  
-  // Example metric: Time since last incident
-  const lastIncident = history && history.length > 0 ? history[0] : null;
-  let timeSinceLastIncident = "N/A";
-  
-  if (lastIncident) {
-    const lastDate = new Date(lastIncident.timestamp);
-    const now = new Date();
-    const diffTime = Math.abs(now - lastDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    timeSinceLastIncident = `${diffDays} dias atrás`;
-  } else {
-    timeSinceLastIncident = "Nenhum registro";
-  }
+function tempoRelativo(date) {
+  const diff = Math.abs(new Date() - new Date(date));
+  const minutos = Math.floor(diff / 60000);
+  const horas = Math.floor(diff / 3600000);
+  const dias = Math.floor(diff / 86400000);
 
-  // Uptime calculation (naive approximation based on history count vs total time could be complex, 
-  // so let's stick to simple counts for now)
+  if (minutos < 1) return "agora mesmo";
+  if (minutos < 60) return `${minutos} min atrás`;
+  if (horas < 24) return `${horas}h atrás`;
+  return `${dias} dia${dias > 1 ? 's' : ''} atrás`;
+}
+
+export function StatsGrid({ history, lastSeen }) {
+  const totalIncidents = history?.length || 0;
+
+  const lastIncident = history && history.length > 0 ? history[0] : null;
+  const timeSinceLastIncident = lastIncident
+    ? tempoRelativo(lastIncident.timestamp)
+    : "Nenhum registro";
 
   const cards = [
     {
       title: "Último Sinal Recebido",
       value: lastSeen ? new Date(lastSeen).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}) : "--:--",
       icon: <Clock className="w-5 h-5 text-blue-500" />,
-      desc: "Autalizado a cada 5 min"
+      desc: "Atualizado a cada 5 min"
     },
     {
       title: "Falhas Registradas",
