@@ -2,7 +2,7 @@ name: Watchdog Monitor
 
 on:
   schedule:
-    - cron: '*/15 * * * *' # Executa a cada 15 minutos (ajustado para confiabilidade)
+    - cron: '*/5 * * * *' # Executa a cada 5 minutos para detecção mais rápida
   workflow_dispatch: # Permite execução manual
   push:
     paths:
@@ -29,7 +29,7 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           ADMIN_EMAIL: ${{ secrets.GMAIL_USER }}
-          TIMEOUT_MINUTES: "7"
+          TIMEOUT_MINUTES: "10"
         run: |
           python scripts/watchdog.py
 

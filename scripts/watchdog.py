@@ -6,8 +6,8 @@ from email.message import EmailMessage
 import sys
 
 # Configuration
-# Allow override via env var, default to 7 minutes
-TIMEOUT_MINUTES = int(os.environ.get('TIMEOUT_MINUTES', 7))
+# Allow override via env var, default to 10 minutes
+TIMEOUT_MINUTES = int(os.environ.get('TIMEOUT_MINUTES', 10))
 JSON_PATH = 'data/status.json'
 
 def send_email(subject, content, recipient_list=None):
