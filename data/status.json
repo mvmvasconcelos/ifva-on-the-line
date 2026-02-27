@@ -1,8 +1,13 @@
 {
-  "status": "online",
+  "status": "offline",
   "last_seen": "2026-02-27T16:46:42.785897Z",
   "last_failure": null,
   "history": [
+    {
+      "timestamp": "2026-02-27T17:39:47.657112Z",
+      "type": "offline_detected",
+      "duration_minutes": 0
+    },
     {
       "timestamp": "2026-02-27T15:09:31.796945Z",
       "type": "offline_detected",
@@ -19,8 +24,8 @@
       "www.vasconcelos@gmail.com"
     ],
     "email_template": {
-      "subject": "⚠️ ALERTA: Sistema Offline",
-      "body": "O sistema de monitoramento detectou que o campus está OFFLINE.\n\nÚltimo sinal recebido: {last_seen}\nTempo decorrido: {elapsed_time}\n\nPor favor, verifique a conectividade e energia do campus."
+      "subject": "\u26a0\ufe0f ALERTA: Sistema Offline",
+      "body": "O sistema de monitoramento detectou que o campus est\u00e1 OFFLINE.\n\n\u00daltimo sinal recebido: {last_seen}\nTempo decorrido: {elapsed_time}\n\nPor favor, verifique a conectividade e energia do campus."
     }
   }
 }
