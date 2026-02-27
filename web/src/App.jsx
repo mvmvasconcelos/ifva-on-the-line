@@ -98,7 +98,7 @@ function App() {
       </div>
       
       <footer className="mt-12 text-center text-gray-400 text-sm pb-8">
-        &copy; {new Date().getFullYear()} IFSul Venâncio Aires - Sistema de Monitoramento | Atualização automática a cada 60s
+        &copy; {new Date().getFullYear()} IFSul Venâncio Aires - Sistema de Monitoramento | Atualização automática a cada 30s
       </footer>
     </div>
   )

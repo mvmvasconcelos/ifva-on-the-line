@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
-const DATA_URL = 'https://raw.githubusercontent.com/mvmvasconcelos/ifva-on-the-line/main/data/status.json';
+// Use GitHub API instead of raw.githubusercontent.com to avoid caching issues
+const API_URL = 'https://api.github.com/repos/mvmvasconcelos/ifva-on-the-line/contents/data/status.json';
 
 export function useStatus() {
   const [data, setData] = useState(null);
@@ -10,16 +11,29 @@ export function useStatus() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // Add cache busting to prevent stale data
-        const response = await fetch(`${DATA_URL}?t=${new Date().getTime()}`);
+        // GitHub API returns base64 encoded content without aggressive caching
+        const response = await fetch(API_URL, {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            // Add cache control headers
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          }
+        });
+        
         if (!response.ok) {
           throw new Error('Falha ao carregar dados de status');
         }
-        const jsonData = await response.json();
+        
+        const apiData = await response.json();
+        // Decode base64 content
+        const decodedContent = atob(apiData.content);
+        const jsonData = JSON.parse(decodedContent);
+        
         setData(jsonData);
         setError(null);
       } catch (err) {
-        console.error(err);
+        console.error('Erro ao buscar status:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -28,8 +42,8 @@ export function useStatus() {
 
     fetchData();
 
-    // Poll every 60 seconds to update the UI without refresh
-    const interval = setInterval(fetchData, 60000);
+    // Poll every 30 seconds for more real-time updates
+    const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, []);
 
