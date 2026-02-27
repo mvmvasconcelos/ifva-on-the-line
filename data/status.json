@@ -1,8 +1,14 @@
 {
-  "status": "online",
+  "status": "offline",
   "last_seen": "2026-02-27T20:12:03.552850Z",
   "last_failure": null,
-  "history": [],
+  "history": [
+    {
+      "timestamp": "2026-02-27T20:26:42.763522Z",
+      "type": "offline_detected",
+      "duration_minutes": 0
+    }
+  ],
   "config": {
     "alert_emails": [
       "www.vasconcelos@gmail.com"
