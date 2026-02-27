@@ -33,8 +33,9 @@ jobs:
           BODY="${BODY//\{last_seen\}/$LAST_SEEN}"
           BODY="${BODY//\{elapsed_time\}/0 minutos (teste)}"
           
-          # Add test header
-          BODY="🧪 ESTE É UM E-MAIL DE TESTE\n\n$BODY\n\n---\nEnviado em: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          # Add test header with Brasília time
+          BRASILIA_TIME=$(TZ='America/Sao_Paulo' date +"%d/%m/%Y às %H:%M:%S (Horário de Brasília)")
+          BODY="🧪 ESTE É UM E-MAIL DE TESTE\n\n$BODY\n\n---\nEnviado em: $BRASILIA_TIME"
           
           echo "emails=$EMAILS" >> $GITHUB_OUTPUT
           echo "subject=[TESTE] $SUBJECT" >> $GITHUB_OUTPUT

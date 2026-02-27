@@ -10,27 +10,30 @@ import sys
 TIMEOUT_MINUTES = int(os.environ.get('TIMEOUT_MINUTES', 7))
 JSON_PATH = 'data/status.json'
 
-def send_email(subject, content):
+def send_email(subject, content, recipient_list=None):
     """Sends an email using the configured SMTP server."""
     gmail_user = os.environ.get('GMAIL_USER')
     gmail_password = os.environ.get('GMAIL_APP_PASSWORD')
-    admin_email = os.environ.get('ADMIN_EMAIL', gmail_user) # Default to self if not set
+    admin_email = os.environ.get('ADMIN_EMAIL', gmail_user) # Fallback
 
     if not gmail_user or not gmail_password:
         print("Error: GMAIL_USER or GMAIL_APP_PASSWORD environment variables not set.")
         return
 
+    # Use recipient list if provided, otherwise fallback to admin_email
+    recipients = recipient_list if recipient_list else [admin_email]
+    
     msg = EmailMessage()
     msg.set_content(content)
     msg['Subject'] = subject
-    msg['From'] = gmail_user
-    msg['To'] = admin_email
+    msg['From'] = f'IFVA Monitor <{gmail_user}>'
+    msg['To'] = ', '.join(recipients)
 
     try:
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
             smtp.login(gmail_user, gmail_password)
             smtp.send_message(msg)
-        print("Email sent successfully.")
+        print(f"Email sent successfully to: {', '.join(recipients)}")
     except Exception as e:
         print(f"Error sending email: {e}")
 
@@ -98,15 +101,22 @@ def main():
                 json.dump(data, f, indent=2)
             
             # 4. Send Alert
+            # Convert to Brasília time for display
+            brasilia_tz = datetime.timezone(datetime.timedelta(hours=-3))
+            now_brasilia = now.astimezone(brasilia_tz)
+            
+            # Get email list from config, or fallback to admin email
+            alert_emails = data.get('config', {}).get('alert_emails', [])
+            
             subject = f"🔴 ALERTA: IFSul Offline (>{int(minutes_diff)}min)"
             body = (
                 f"O sistema de monitoramento detectou que o campus está incomunicável.\n\n"
                 f"Último contato: {last_seen_str}\n"
                 f"Tempo decorrido: {int(minutes_diff)} minutos\n"
-                f"Data do alerta: {now.strftime('%d/%m/%Y %H:%M:%S UTC')}\n\n"
+                f"Data do alerta: {now_brasilia.strftime('%d/%m/%Y às %H:%M:%S')} (Horário de Brasília)\n\n"
                 f"Verifique a conexão de internet ou energia no local."
             )
-            send_email(subject, body)
+            send_email(subject, body, alert_emails if alert_emails else None)
             
         elif current_status == 'offline':
             print("System is already offline. No new alert.")
