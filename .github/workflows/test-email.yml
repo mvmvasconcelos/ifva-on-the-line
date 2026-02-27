@@ -1,0 +1,57 @@
+# .github/workflows/test-email.yml
+name: Test Email Alert
+
+on:
+  repository_dispatch:
+    types: [test_email]
+  workflow_dispatch:  # Permite disparo manual via UI
+
+jobs:
+  send-test-email:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Read config from status.json
+        id: read-config
+        run: |
+          # Extract email configuration from status.json
+          EMAILS=$(jq -r '.config.alert_emails // [] | join(",")' data/status.json)
+          SUBJECT=$(jq -r '.config.email_template.subject // "⚠️ TESTE: Alerta do Sistema"' data/status.json)
+          BODY=$(jq -r '.config.email_template.body // "Este é um e-mail de teste."' data/status.json)
+          LAST_SEEN=$(jq -r '.last_seen' data/status.json)
+          
+          # Replace variables in body
+          BODY="${BODY//\{last_seen\}/$LAST_SEEN}"
+          BODY="${BODY//\{elapsed_time\}/0 minutos (teste)}"
+          
+          # Add test header
+          BODY="🧪 ESTE É UM E-MAIL DE TESTE\n\n$BODY\n\n---\nEnviado em: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          
+          echo "emails=$EMAILS" >> $GITHUB_OUTPUT
+          echo "subject=[TESTE] $SUBJECT" >> $GITHUB_OUTPUT
+          
+          # Save body to file for multiline handling
+          echo "$BODY" > /tmp/email_body.txt
+
+      - name: Send test email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.GMAIL_USER }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: ${{ steps.read-config.outputs.subject }}
+          to: ${{ steps.read-config.outputs.emails }}
+          from: IFVA Monitor <${{ secrets.GMAIL_USER }}>
+          body: file:///tmp/email_body.txt
+          ignore_cert: true
+          convert_markdown: false
+
+      - name: Log success
+        run: |
+          echo "✅ E-mail de teste enviado com sucesso!"
+          echo "Destinatários: ${{ steps.read-config.outputs.emails }}"
+          echo "Assunto: ${{ steps.read-config.outputs.subject }}"

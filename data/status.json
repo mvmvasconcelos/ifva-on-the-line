@@ -13,5 +13,12 @@
       "type": "offline_detected",
       "duration_minutes": 31
     }
-  ]
+  ],
+  "config": {
+    "alert_emails": [],
+    "email_template": {
+      "subject": "⚠️ ALERTA: Sistema Offline",
+      "body": "O sistema de monitoramento detectou que o campus está OFFLINE.\n\nÚltimo sinal recebido: {last_seen}\nTempo decorrido: {elapsed_time}\n\nPor favor, verifique a conectividade e energia do campus."
+    }
+  }
 }

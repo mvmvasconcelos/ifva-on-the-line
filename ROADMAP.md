@@ -5,8 +5,8 @@ Este documento serve como guia para a construção de um sistema de monitorament
 ## 🟢 Fase 1: Setup Inicial e Segurança
 
 - [x] Criar repositório público no GitHub: `ifva-on-the-line`.
-- [ ] Gerar um **Personal Access Token (PAT)** com permissão de `repo` e `workflow`.
-- [ ] Configurar **GitHub Secrets** (Settings > Secrets > Actions):
+- [x] Gerar um **Personal Access Token (PAT)** com permissão de `repo` e `workflow`.
+- [x] Configurar **GitHub Secrets** (Settings > Secrets > Actions):
     - `PAT_TOKEN`: O token gerado acima.
     - `GMAIL_USER`: Seu e-mail do Gmail.
     - `GMAIL_APP_PASSWORD`: Senha de app gerada na conta Google.
@@ -30,7 +30,8 @@ Este documento serve como guia para a construção de um sistema de monitorament
 - [x] Criar script Bash `heartbeat.sh` para o Linux do campus:
     - Deve enviar um POST para a API do GitHub (`repository_dispatch`).
     - Payload: `{"event_type": "heartbeat"}`.
-- [ ] Configurar no `crontab -e`:
+- [x] Criar script PowerShell `heartbeat.ps1` para uso local/Windows.
+- [ ] Configurar no `crontab -e` ou Task Scheduler:
     - Periodicidade: `*/5 * * * *` (a cada 5 minutos).
 
 ## 🟣 Fase 4: Automação com GitHub Actions
@@ -60,13 +61,15 @@ Este documento serve como guia para a construção de um sistema de monitorament
 - [x] **Data Fetching:**
     - Criar hook para consumir o `status.json` do GitHub Raw com cache busting (`?t=timestamp`).
 
-## 🔴 Fase 6: Área Avançada (Configurações)
+## � Fase 6: Área Avançada (Configurações)
 
-- [ ] Criar modal de acesso protegido por senha (validando contra o hash).
-- [ ] **Funcionalidades:**
+- [x] Criar modal de acesso protegido por senha (validando contra o hash).
+- [x] **Funcionalidades:**
     - Input para editar lista de e-mails (salvar no JSON).
     - Input para editar o template do e-mail de alerta.
     - Botão "Testar Envio": Dispara um evento `test_email` para o GitHub Actions.
+- [x] Criar workflow `test-email.yml` para envio de e-mails de teste.
+- [ ] Implementar salvamento via GitHub API (atualmente manual).
 
 ## 🚀 Fase 7: Deployment e Testes
 
