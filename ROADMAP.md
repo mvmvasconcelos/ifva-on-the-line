@@ -2,7 +2,7 @@
 
 Este documento serve como guia para a construção de um sistema de monitoramento de energia e conectividade utilizando GitHub Actions como backend, JSON como banco de dados e React como interface.
 
-## 🟢 Fase 1: Setup Inicial e Segurança
+## Fase 1: Setup Inicial e Segurança
 
 - [x] Criar repositório público no GitHub: `ifva-on-the-line`.
 - [x] Gerar um **Personal Access Token (PAT)** com permissão de `repo` e `workflow`.
@@ -14,7 +14,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
     - `GMAIL_APP_PASSWORD`: Senha de app gerada na conta Google.
     - `TELEGRAM_BOT_TOKEN`: Token do bot criado via @BotFather.
 
-## 🟡 Fase 2: O "Banco de Dados" (JSON)
+## Fase 2: O "Banco de Dados" (JSON)
 
 - [x] Criar arquivo `data/status.json` com a estrutura inicial:
 
@@ -39,7 +39,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
 
 **Observação:** Para modificar os destinatários de e-mail/Telegram ou personalizar templates, edite diretamente o arquivo `data/status.json` no GitHub.
 
-## 🔵 Fase 3: Script do Firewall (Lado do Campus)
+## Fase 3: Script do Firewall (Lado do Campus)
 
 - [x] Criar script Bash `heartbeat.sh` para o Linux do campus:
     - Deve enviar um POST para a API do GitHub (`repository_dispatch`).
@@ -48,7 +48,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
 - [x] Configurar no `crontab -e` ou Task Scheduler:
     - Periodicidade: `*/5 * * * *` (a cada 5 minutos).
 
-## 🟣 Fase 4: Automação com GitHub Actions
+## Fase 4: Automação com GitHub Actions
 
 - [x] **Workflow A (receive-heartbeat.yml):**
     - Gatilho: `repository_dispatch` (heartbeat do campus).
@@ -65,7 +65,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
         - Disparar alertas via Email (SMTP Gmail) e Telegram simultaneamente.
         - Commit e Push automático.
 
-## 🟠 Fase 5: Frontend React (Dashboard)
+## Fase 5: Frontend React (Dashboard)
 
 - [x] Inicializar projeto React (Vite) com Tailwind CSS.
 - [x] **Componentes Principais:**
@@ -83,7 +83,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
     - Gradientes e indicadores visuais baseados em status.
     - Design responsivo com Tailwind CSS.
 
-## 🚀 Fase 6: Deployment e Testes
+## Fase 6: Deployment e Testes
 
 - [x] Configurar GitHub Pages via workflow `deploy-web.yml`.
 - [x] **Teste de Estresse:** Desligar o script no firewall e validar:
@@ -93,7 +93,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
 - [x] Validar responsividade do dashboard no mobile.
 - [x] Criar workflow `test-email.yml` para envio de e-mails de teste manual.
 
-## 📱 Fase 7: Notificações via Telegram
+## Fase 7: Notificações via Telegram
 
 - [x] Criar bot no Telegram via [@BotFather](https://t.me/botfather).
 - [x] Obter Chat ID via API: `https://api.telegram.org/bot<TOKEN>/getUpdates`
