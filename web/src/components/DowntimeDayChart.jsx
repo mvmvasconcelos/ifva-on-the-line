@@ -64,7 +64,10 @@ export function DowntimeDayChart({ history }) {
         scales: {
             y: {
                 beginAtZero: true,
-                stepSize: 1,
+                ticks: {
+                    stepSize: 1,
+                    precision: 0
+                }
             }
         }
     };
