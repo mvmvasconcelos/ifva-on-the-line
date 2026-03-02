@@ -8,6 +8,7 @@ import { UptimeStats } from './components/UptimeStats'
 import { formatDurationVerbose } from './utils/format'
 import { HeartbeatMonitor } from './components/HeartbeatMonitor'
 import { useStatus } from './hooks/useStatus'
+import { exportHistoryToCSV } from './utils/exportCsv'
 
 function App() {
   const { data, loading, error } = useStatus()
@@ -64,8 +65,15 @@ function App() {
 
         {/* History Log Table */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 bg-gray-50">
-            <h3 className="tex-lg font-semibold text-gray-900">Histórico de Eventos</h3>
+          <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-gray-900">Histórico de Eventos</h3>
+            <button
+              onClick={() => exportHistoryToCSV(data?.history)}
+              disabled={!data?.history || data.history.length === 0}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Exportar Planilha (CSV)
+            </button>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
