@@ -8,15 +8,15 @@ jobs:
   update-status:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Important: allows the workflow to push changes
+      contents: write # Importante: permite que o workflow faça push das alterações
 
     steps:
-      - name: Checkout repository
+      - name: Fazer checkout do repositório
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT_TOKEN }}
 
-      - name: Setup Python
+      - name: Configurar Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
@@ -89,15 +89,15 @@ jobs:
               sys.exit(1)
           "
 
-      - name: Commit and push changes
+      - name: Comitar e enviar alterações
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add data/status.json
           
-          # Only commit if there are changes
+          # Apenas fazer commit se houver alterações
           if git diff --staged --quiet; then
-            echo "No changes to commit"
+            echo "Nenhuma alteração para comitar"
           else
             git commit -m "update: heartbeat recebido!"
             for i in 1 2 3 4 5; do

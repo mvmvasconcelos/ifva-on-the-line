@@ -1,5 +1,5 @@
 # .github/workflows/test-email.yml
-name: Test Email Alert
+name: Testar Alerta por E-mail
 
 on:
   repository_dispatch:
@@ -7,60 +7,60 @@ on:
   workflow_dispatch:  # Permite disparo manual via UI
 
 jobs:
-  send-test-email:
+  enviar-email-teste:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout repository
+      - name: Fazer checkout do repositório
         uses: actions/checkout@v3
 
-      - name: Read config from status.json
-        id: read-config
+      - name: Ler configuração do status.json
+        id: ler-configuracao
         run: |
-          # Extract email configuration from status.json
+          # Extrair a configuração de e-mail do status.json
           EMAILS=$(jq -r '.config.alert_emails // [] | join(",")' data/status.json)
           SUBJECT=$(jq -r '.config.email_template.subject // "⚠️ TESTE: Alerta do Sistema"' data/status.json)
           BODY=$(jq -r '.config.email_template.body // "Este é um e-mail de teste."' data/status.json)
           LAST_SEEN=$(jq -r '.last_seen' data/status.json)
           
-          # Check if emails list is not empty
+          # Verificar se a lista de e-mails não está vazia
           if [ -z "$EMAILS" ]; then
             echo "❌ Nenhum e-mail configurado na lista de alertas!"
             exit 1
           fi
           
-          # Replace variables in body
+          # Substituir variáveis no corpo do e-mail
           BODY="${BODY//\{last_seen\}/$LAST_SEEN}"
           BODY="${BODY//\{elapsed_time\}/0 minutos (teste)}"
           
-          # Add test header with Brasília time
+          # Adicionar cabeçalho de teste com o fuso horário de Brasília
           BRASILIA_TIME=$(TZ='America/Sao_Paulo' date +"%d/%m/%Y às %H:%M:%S (Horário de Brasília)")
           BODY="🧪 ESTE É UM E-MAIL DE TESTE\n\n$BODY\n\n---\nEnviado em: $BRASILIA_TIME"
           
           echo "emails=$EMAILS" >> $GITHUB_OUTPUT
           echo "subject=[TESTE] $SUBJECT" >> $GITHUB_OUTPUT
           
-          # Save body to file for multiline handling
+          # Salvar corpo em arquivo para lidar com múltiplas linhas
           echo -e "$BODY" > /tmp/email_body.txt
           
           echo "📧 Destinatários: $EMAILS"
 
-      - name: Send test email
+      - name: Enviar e-mail de teste
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 587
           username: ${{ secrets.GMAIL_USER }}
           password: ${{ secrets.GMAIL_APP_PASSWORD }}
-          subject: ${{ steps.read-config.outputs.subject }}
-          to: ${{ steps.read-config.outputs.emails }}
+          subject: ${{ steps.ler-configuracao.outputs.subject }}
+          to: ${{ steps.ler-configuracao.outputs.emails }}
           from: IFVA Monitor <${{ secrets.GMAIL_USER }}>
           body: file:///tmp/email_body.txt
           ignore_cert: true
           convert_markdown: false
 
-      - name: Log success
+      - name: Registrar sucesso
         run: |
           echo "✅ E-mail de teste enviado com sucesso!"
-          echo "Destinatários: ${{ steps.read-config.outputs.emails }}"
-          echo "Assunto: ${{ steps.read-config.outputs.subject }}"
+          echo "Destinatários: ${{ steps.ler-configuracao.outputs.emails }}"
+          echo "Assunto: ${{ steps.ler-configuracao.outputs.subject }}"

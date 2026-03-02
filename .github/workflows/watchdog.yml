@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout repository
+      - name: Fazer checkout do repositório
         uses: actions/checkout@v3
 
-      - name: Setup Python
+      - name: Configurar Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
@@ -34,12 +34,12 @@ jobs:
         run: |
           python scripts/watchdog.py
 
-      - name: Commit and push changes
+      - name: Comitar e enviar alterações
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          # Tenta adicionar o arquivo se ele foi modificado
+          # Tenta adicionar o arquivo data/status.json se ele existir
           if [ -f data/status.json ]; then
             git add data/status.json
           else

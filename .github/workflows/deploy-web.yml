@@ -4,7 +4,7 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "web/**" # Only change if web folder changes
+      - "web/**" # Apenas rodar o deploy se a pasta web tiver sido modificada
   workflow_dispatch:
 
 permissions:
@@ -20,26 +20,26 @@ jobs:
         working-directory: ./web
 
     steps:
-      - name: Checkout
+      - name: Fazer checkout do repositório
         uses: actions/checkout@v3
 
-      - name: Setup Node
+      - name: Configurar Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          # Cache requires package-lock.json which is not present initially
+          # O cache requer o package-lock.json, que não está presente inicialmente
           # cache: "npm"
           # cache-dependency-path: web/package-lock.json
 
-      # If package-lock.json doesn't exist yet (first run), we might need to generate it or use install
-      - name: Install Dependencies
+      # Se o package-lock.json ainda não existir (primeira execução), podemos precisar gerá-lo ou usar o install
+      - name: Instalar Dependências
         run: npm install
 
-      - name: Build
+      - name: Construir Aplicação
         run: npm run build
 
-      - name: Deploy to GitHub Pages
+      - name: Fazer Deploy no GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: web/dist # The build output folder
-          branch: gh-pages # The branch the action should deploy to.
+          folder: web/dist # A pasta de saída do build
+          branch: gh-pages # A branch para a qual a action deve fazer deploy.
