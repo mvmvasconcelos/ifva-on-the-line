@@ -2,6 +2,8 @@
 import { StatusHeader } from './components/StatusHeader'
 import { StatsGrid } from './components/StatsGrid'
 import { IncidentsChart } from './components/IncidentsChart'
+import { DowntimeTimeChart } from './components/DowntimeTimeChart'
+import { DowntimeDayChart } from './components/DowntimeDayChart'
 import { UptimeStats } from './components/UptimeStats'
 import { formatDurationVerbose } from './utils/format'
 import { HeartbeatMonitor } from './components/HeartbeatMonitor'
@@ -48,6 +50,16 @@ function App() {
         {/* Chart Section */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
           <IncidentsChart history={data?.history || []} />
+        </div>
+
+        {/* Mini Charts Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <DowntimeTimeChart history={data?.history || []} />
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <DowntimeDayChart history={data?.history || []} />
+          </div>
         </div>
 
         {/* History Log Table */}
