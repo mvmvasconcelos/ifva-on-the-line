@@ -53,5 +53,7 @@ jobs:
           else
             TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
             git commit -m "alerta: campus sem resposta detectado em $TIMESTAMP"
-            git push
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main && git push && break || sleep 2
+            done
           fi

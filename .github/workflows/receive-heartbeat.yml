@@ -100,5 +100,7 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "update: heartbeat recebido!"
-            git push
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main && git push && break || sleep 2
+            done
           fi
