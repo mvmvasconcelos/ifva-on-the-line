@@ -3,6 +3,7 @@ import { StatusHeader } from './components/StatusHeader'
 import { StatsGrid } from './components/StatsGrid'
 import { IncidentsChart } from './components/IncidentsChart'
 import { UptimeStats } from './components/UptimeStats'
+import { formatDurationVerbose } from './utils/format'
 import { HeartbeatMonitor } from './components/HeartbeatMonitor'
 import { useStatus } from './hooks/useStatus'
 
@@ -28,7 +29,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900 font-sans">
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        
+
         {/* Header Section */}
         <StatusHeader status={data?.status} lastSeen={data?.last_seen} />
 
@@ -36,7 +37,7 @@ function App() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
           {/* Heartbeat Monitor */}
           <HeartbeatMonitor lastSeen={data?.last_seen} status={data?.status} />
-          
+
           {/* Uptime Stats */}
           <UptimeStats history={data?.history} lastSeen={data?.last_seen} />
         </div>
@@ -83,7 +84,7 @@ function App() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {event.duration_minutes > 0
-                          ? `${Math.round(event.duration_minutes)} min`
+                          ? formatDurationVerbose(event.duration_minutes)
                           : <span className="text-orange-400 italic">Em andamento...</span>
                         }
                       </td>
@@ -96,7 +97,7 @@ function App() {
         </div>
 
       </div>
-      
+
       <footer className="mt-12 text-center text-gray-400 text-sm pb-8">
         &copy; {new Date().getFullYear()} IFSul Venâncio Aires - Sistema de Monitoramento | Atualização automática a cada 30s
       </footer>

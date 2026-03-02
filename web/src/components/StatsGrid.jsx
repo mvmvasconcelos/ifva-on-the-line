@@ -1,32 +1,26 @@
 // web/src/components/StatsGrid.jsx
 import { Clock, Activity, WifiOff } from "lucide-react";
-
-function tempoRelativo(date) {
-  const diff = Math.abs(new Date() - new Date(date));
-  const minutos = Math.floor(diff / 60000);
-  const horas = Math.floor(diff / 3600000);
-  const dias = Math.floor(diff / 86400000);
-
-  if (minutos < 1) return "agora mesmo";
-  if (minutos < 60) return `${minutos} min atrás`;
-  if (horas < 24) return `${horas}h atrás`;
-  return `${dias} dia${dias > 1 ? 's' : ''} atrás`;
-}
+import { tempoRelativoVerbose, formatDateTimeShort } from "../utils/format";
 
 export function StatsGrid({ history, lastSeen }) {
   const totalIncidents = history?.length || 0;
 
   const lastIncident = history && history.length > 0 ? history[0] : null;
   const timeSinceLastIncident = lastIncident
-    ? tempoRelativo(lastIncident.timestamp)
+    ? tempoRelativoVerbose(lastIncident.timestamp)
     : "Nenhum registro";
 
   const cards = [
     {
       title: "Último Sinal Recebido",
-      value: lastSeen ? new Date(lastSeen).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}) : "--:--",
+      value: lastSeen ? new Date(lastSeen).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : "--:--",
       icon: <Clock className="w-5 h-5 text-blue-500" />,
-      desc: "Atualizado a cada 5 min"
+      desc: (
+        <>
+          Atualizado a cada 5 min
+          {lastSeen && <span className="block mt-0.5">em {formatDateTimeShort(lastSeen)}</span>}
+        </>
+      )
     },
     {
       title: "Falhas Registradas",
@@ -53,7 +47,7 @@ export function StatsGrid({ history, lastSeen }) {
             </div>
           </div>
           <div className="text-3xl font-bold text-gray-900 mb-1">{card.value}</div>
-          <p className="text-xs text-gray-400">{card.desc}</p>
+          <div className="text-xs text-gray-400">{card.desc}</div>
         </div>
       ))}
     </div>

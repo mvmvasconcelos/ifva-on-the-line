@@ -1,5 +1,6 @@
 // web/src/components/UptimeStats.jsx
 import { useMemo } from 'react'
+import { formatDurationVerbose } from '../utils/format'
 
 export function UptimeStats({ history, lastSeen }) {
   const stats = useMemo(() => {
@@ -18,51 +19,73 @@ export function UptimeStats({ history, lastSeen }) {
     const now = new Date()
     const currentMonth = now.getMonth()
     const currentYear = now.getFullYear()
+    const startOfMonth = new Date(currentYear, currentMonth, 1)
 
-    // Filter incidents from current month
-    const monthIncidents = history.filter(event => {
-      const eventDate = new Date(event.timestamp)
-      return eventDate.getMonth() === currentMonth && 
-             eventDate.getFullYear() === currentYear
+    let totalDowntimeMinutes = 0
+    let totalIncidents = 0
+    let maxDuration = 0
+    let minDuration = Infinity
+
+    // Iterate over all incidents to properly account for ongoing ones from previous months
+    history.forEach(event => {
+      const eventStart = new Date(event.timestamp)
+      let eventEnd = now
+      let isOngoing = false
+
+      if (!event.duration_minutes || event.duration_minutes === 0) {
+        // Ongoing downtime
+        isOngoing = true
+      } else {
+        eventEnd = new Date(eventStart.getTime() + event.duration_minutes * 60000)
+      }
+
+      // Check if incident overlaps with the current month
+      if (eventEnd > startOfMonth && eventStart <= now) {
+        // If it started in the current month, count as an incident for this month
+        if (eventStart >= startOfMonth) {
+          totalIncidents++;
+        } else if (isOngoing) {
+          // If it started before this month but is still ongoing, it's visibly impacting this month
+          totalIncidents++;
+        }
+
+        // Calculate downtime overlap for current month
+        const overlapStart = eventStart < startOfMonth ? startOfMonth : eventStart;
+        const overlapEnd = eventEnd > now ? now : eventEnd;
+        const overlapMinutes = (overlapEnd.getTime() - overlapStart.getTime()) / 60000;
+
+        if (overlapMinutes > 0) {
+          totalDowntimeMinutes += overlapMinutes;
+
+          // Use real duration for min/max
+          const actualDuration = event.duration_minutes || ((now - eventStart) / 60000);
+          if (actualDuration > maxDuration) maxDuration = actualDuration;
+          if (actualDuration < minDuration) minDuration = actualDuration;
+        }
+      }
     })
 
-    const totalIncidents = monthIncidents.length
-    const durations = monthIncidents
-      .map(e => e.duration_minutes || 0)
-      .filter(d => d > 0)
-    
-    const totalDowntimeMinutes = durations.reduce((sum, d) => sum + d, 0)
-    const avgIncidentDuration = durations.length > 0 
-      ? totalDowntimeMinutes / durations.length 
-      : 0
-    
-    const longestIncident = durations.length > 0 ? Math.max(...durations) : 0
-    const shortestIncident = durations.length > 0 ? Math.min(...durations) : 0
+    if (minDuration === Infinity) minDuration = 0
 
-    // Calculate uptime percentage for the month
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
-    const minutesInMonth = daysInMonth * 24 * 60
-    const uptimePercent = ((minutesInMonth - totalDowntimeMinutes) / minutesInMonth) * 100
+    // Calculate uptime percentage for the month relative to elapsed time
+    const minutesInMonth = (now.getTime() - startOfMonth.getTime()) / 60000;
+
+    // Fallback if minutesInMonth is very small or negative (clock skew)
+    let uptimePercent = 100;
+    if (minutesInMonth > 0) {
+      uptimePercent = ((minutesInMonth - totalDowntimeMinutes) / minutesInMonth) * 100
+    }
 
     return {
       uptimePercent: Math.max(0, Math.min(100, uptimePercent)),
       totalIncidents,
       totalDowntimeMinutes,
-      avgIncidentDuration,
-      longestIncident,
-      shortestIncident,
+      avgIncidentDuration: totalIncidents > 0 ? totalDowntimeMinutes / totalIncidents : 0,
+      longestIncident: maxDuration,
+      shortestIncident: minDuration,
       currentMonthIncidents: totalIncidents
     }
   }, [history])
-
-  const formatDuration = (minutes) => {
-    if (minutes < 60) {
-      return `${Math.round(minutes)} min`
-    }
-    const hours = Math.floor(minutes / 60)
-    const mins = Math.round(minutes % 60)
-    return `${hours}h ${mins}min`
-  }
 
   const getUptimeColor = (percent) => {
     if (percent >= 99.9) return 'text-green-600'
@@ -93,8 +116,8 @@ export function UptimeStats({ history, lastSeen }) {
               {stats.uptimePercent.toFixed(3)}%
             </div>
             <div className="mt-2 text-xs text-gray-500">
-              {stats.totalDowntimeMinutes > 0 
-                ? `${formatDuration(stats.totalDowntimeMinutes)} de downtime`
+              {stats.totalDowntimeMinutes > 0
+                ? `${formatDurationVerbose(stats.totalDowntimeMinutes)} de downtime`
                 : 'Nenhum downtime registrado'}
             </div>
           </div>
@@ -113,7 +136,7 @@ export function UptimeStats({ history, lastSeen }) {
 
           <div className="text-center p-4 bg-gray-50 rounded-lg">
             <div className="text-2xl font-bold text-gray-900">
-              {stats.avgIncidentDuration > 0 ? formatDuration(stats.avgIncidentDuration) : '--'}
+              {stats.avgIncidentDuration > 0 ? formatDurationVerbose(stats.avgIncidentDuration) : '--'}
             </div>
             <div className="text-xs text-gray-600 mt-1">
               Duração Média
@@ -122,7 +145,7 @@ export function UptimeStats({ history, lastSeen }) {
 
           <div className="text-center p-4 bg-gray-50 rounded-lg">
             <div className="text-2xl font-bold text-gray-900">
-              {stats.longestIncident > 0 ? formatDuration(stats.longestIncident) : '--'}
+              {stats.longestIncident > 0 ? formatDurationVerbose(stats.longestIncident) : '--'}
             </div>
             <div className="text-xs text-gray-600 mt-1">
               Maior Queda
@@ -131,7 +154,7 @@ export function UptimeStats({ history, lastSeen }) {
 
           <div className="text-center p-4 bg-gray-50 rounded-lg">
             <div className="text-2xl font-bold text-gray-900">
-              {stats.shortestIncident > 0 ? formatDuration(stats.shortestIncident) : '--'}
+              {stats.shortestIncident > 0 ? formatDurationVerbose(stats.shortestIncident) : '--'}
             </div>
             <div className="text-xs text-gray-600 mt-1">
               Menor Queda
@@ -146,7 +169,7 @@ export function UptimeStats({ history, lastSeen }) {
             <span>Downtime</span>
           </div>
           <div className="w-full bg-red-100 rounded-full h-3 overflow-hidden">
-            <div 
+            <div
               className="bg-green-500 h-3 rounded-full transition-all duration-500"
               style={{ width: `${stats.uptimePercent}%` }}
             ></div>

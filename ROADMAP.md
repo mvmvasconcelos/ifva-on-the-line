@@ -6,7 +6,9 @@ Este documento serve como guia para a construção de um sistema de monitorament
 
 - [x] Criar repositório público no GitHub: `ifva-on-the-line`.
 - [x] Gerar um **Personal Access Token (PAT)** com permissão de `repo` e `workflow`.
-- [x] Configurar **GitHub Secrets** (Settings > Secrets > Actions):
+    -> Settings > Developer settings > Personal access tokens > Tokens (classic) > Generate new token
+- [x] Configurar **GitHub Secrets** 
+    -> Settings > Secrets and variables > Actions > New repository secret
     - `PAT_TOKEN`: O token gerado acima.
     - `GMAIL_USER`: Seu e-mail do Gmail.
     - `GMAIL_APP_PASSWORD`: Senha de app gerada na conta Google.
