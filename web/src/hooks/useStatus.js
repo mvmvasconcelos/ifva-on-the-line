@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 
-// Use GitHub API instead of raw.githubusercontent.com to avoid caching issues
-const API_URL = 'https://api.github.com/repos/mvmvasconcelos/ifva-on-the-line/contents/data/status.json';
+// Using raw.githubusercontent.com with a cache-busting query parameter
+// avoids the rigid 60 requests/hour limit of the unauthenticated GitHub API.
+const getApiUrl = () => `https://raw.githubusercontent.com/mvmvasconcelos/ifva-on-the-line/main/data/status.json?t=${Date.now()}`;
 
 export function useStatus() {
   const [data, setData] = useState(null);
@@ -11,22 +12,20 @@ export function useStatus() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // GitHub API returns content without aggressive caching (no custom headers needed for CORS)
-        const response = await fetch(API_URL, {
+        const response = await fetch(getApiUrl(), {
           headers: {
-            'Accept': 'application/vnd.github.v3+json'
-          }
+            'Accept': 'application/json'
+          },
+          // Some browsers also respect cache directives:
+          cache: 'no-store'
         });
-        
+
         if (!response.ok) {
-          throw new Error('Falha ao carregar dados de status');
+          throw new Error('Falha ao carregar dados de status: ' + response.status);
         }
-        
-        const apiData = await response.json();
-        // Decode base64 content
-        const decodedContent = atob(apiData.content);
-        const jsonData = JSON.parse(decodedContent);
-        
+
+        const jsonData = await response.json();
+
         setData(jsonData);
         setError(null);
       } catch (err) {

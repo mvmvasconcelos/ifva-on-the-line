@@ -1,7 +1,8 @@
 # Scripts de heartbeat locais (não versionar com tokens)
-scripts/*heartbeat*
 **/heartbeat.ps1
 **/heartbeat.sh
+heartbeat.ps1
+
 
 # Environment variables
 web/.env
