@@ -14,7 +14,7 @@ $Body = @{
 
 $Uri = "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/dispatches"
 
-Write-Host "Iniciando o envio de heartbeats a cada 5 minutos. Pressione Ctrl+C para cancelar." -ForegroundColor Cyan
+Write-Host "Iniciando o envio de heartbeats a cada 15 minutos. Pressione Ctrl+C para cancelar." -ForegroundColor Cyan
 
 while ($true) {
     try {
@@ -25,6 +25,6 @@ while ($true) {
         Write-Host "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] Falha ao enviar heartbeat. Erro: $($_.Exception.Message)" -ForegroundColor Red
     }
     
-    # Aguarda 5 minutos (300 segundos) antes de enviar o próximo
-    Start-Sleep -Seconds 300
+    # Aguarda 15 minutos (900 segundos) antes de enviar o próximo
+    Start-Sleep -Seconds 900
 }

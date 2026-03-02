@@ -25,11 +25,11 @@ export function HeartbeatMonitor({ lastSeen, status }) {
       timeSince = `${diffSeconds}s atrás`
     }
 
-    // Expected: every 5 minutes
-    const nextExpectedMs = 5 * 60 * 1000 - diffMs
+    // Expected: every 15 minutes
+    const nextExpectedMs = 15 * 60 * 1000 - diffMs
     const nextMinutes = Math.floor(nextExpectedMs / 60000)
     const nextSeconds = Math.floor((nextExpectedMs % 60000) / 1000)
-    
+
     let nextExpected = null
     if (nextExpectedMs > 0) {
       if (nextMinutes > 0) {
@@ -44,10 +44,10 @@ export function HeartbeatMonitor({ lastSeen, status }) {
     // Health indicator
     let health = 'healthy'
     let pulseClass = 'animate-pulse-slow'
-    if (status === 'offline' || diffMinutes >= 7) {
+    if (status === 'offline' || diffMinutes >= 17) {
       health = 'critical'
       pulseClass = 'animate-pulse-fast'
-    } else if (diffMinutes >= 5) {
+    } else if (diffMinutes >= 15) {
       health = 'warning'
       pulseClass = 'animate-pulse-medium'
     }
@@ -139,9 +139,9 @@ export function HeartbeatMonitor({ lastSeen, status }) {
             <div className="p-3 bg-gray-50 rounded-lg">
               <div className="text-xs text-gray-500 mb-1">Timestamp Completo:</div>
               <div className="text-xs font-mono text-gray-700">
-                {new Date(lastSeen).toLocaleString('pt-BR', { 
-                  dateStyle: 'short', 
-                  timeStyle: 'medium' 
+                {new Date(lastSeen).toLocaleString('pt-BR', {
+                  dateStyle: 'short',
+                  timeStyle: 'medium'
                 })}
               </div>
             </div>
@@ -151,8 +151,8 @@ export function HeartbeatMonitor({ lastSeen, status }) {
         {/* Legend */}
         <div className="mt-4 pt-4 border-t border-gray-100">
           <div className="text-xs text-gray-500">
-            <strong>Intervalo normal:</strong> Heartbeat a cada 5 minutos<br/>
-            <strong>Timeout:</strong> Alerta após 7 minutos sem sinal
+            <strong>Intervalo normal:</strong> Heartbeat a cada 15 minutos<br />
+            <strong>Timeout:</strong> Alerta após 17 minutos sem sinal
           </div>
         </div>
       </div>

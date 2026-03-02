@@ -13,7 +13,7 @@ O objetivo principal é detectar interrupções de conectividade ou energia no c
 
 A arquitetura do projeto é baseada em uma abordagem "serverless" utilizando recursos gratuitos do GitHub:
 
-1.  **Origem (No Campus):** Um script simples (`heartbeat.sh`) rodando em um servidor Linux dentro do campus envia uma requisição HTTP (POST) a cada 5 minutos para a API do GitHub.
+1.  **Origem (No Campus):** Um script simples (`heartbeat.sh` ou similar) rodando em um servidor dentro do campus envia uma requisição HTTP (POST) a cada 15 minutos para a API do GitHub.
 2.  **Backend (GitHub Actions):**
     *   O workflow `Receive Heartbeat` recebe cada sinal e executa a lógica principal de detecção:
         *   Atualiza o `last_seen` e confirma `status: online`.

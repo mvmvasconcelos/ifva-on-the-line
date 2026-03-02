@@ -28,7 +28,7 @@ jobs:
           import datetime
           import sys
 
-          TIMEOUT_MINUTES = 10
+          TIMEOUT_MINUTES = 17
           JSON_PATH = 'data/status.json'
 
           def parse_time(ts):
