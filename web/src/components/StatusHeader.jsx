@@ -9,19 +9,19 @@ export function StatusHeader({ status, lastSeen }) {
     const now = new Date();
     const lastSeenDate = new Date(lastSeen);
     const minutesSince = (now - lastSeenDate) / (1000 * 60);
-    const TIMEOUT_MINUTES = 7;
+    const TIMEOUT_MINUTES = 17;
     return minutesSince < TIMEOUT_MINUTES;
   }, [lastSeen]);
-  
+
   const statusColor = isOnline ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
-  
-  const formattedDate = lastSeen 
-    ? new Date(lastSeen).toLocaleString('pt-BR') 
+
+  const formattedDate = lastSeen
+    ? new Date(lastSeen).toLocaleString('pt-BR')
     : 'Desconhecido';
 
   return (
     <div className={`relative p-8 rounded-2xl shadow-lg border-2 ${isOnline ? 'border-green-300 bg-gradient-to-br from-green-50 to-green-100' : 'border-red-300 bg-gradient-to-br from-red-50 to-red-100'} flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-500 overflow-hidden`}>
-      
+
       <div className="relative flex items-center gap-4">
         <div className="relative">
           {isOnline ? (
