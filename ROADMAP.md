@@ -45,7 +45,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
     - Deve enviar um POST para a API do GitHub (`repository_dispatch`).
     - Payload: `{"event_type": "heartbeat"}`.
 - [x] Criar script PowerShell `heartbeat.ps1` para uso local/Windows.
-- [ ] Configurar no `crontab -e` ou Task Scheduler:
+- [x] Configurar no `crontab -e` ou Task Scheduler:
     - Periodicidade: `*/5 * * * *` (a cada 5 minutos).
 
 ## 🟣 Fase 4: Automação com GitHub Actions
@@ -77,6 +77,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
 - [x] **Data Fetching:**
     - Criar hook `useStatus` para consumir o `status.json` via GitHub API (evita cache).
     - Auto-refresh a cada 30 segundos.
+    - Implementar funcionalidade de Exportação CSV e Download dos dados de histórico para análise offline.
 - [x] **Animações e UX:**
     - Animações customizadas (pulse-slow/medium/fast, spin-slow).
     - Gradientes e indicadores visuais baseados em status.
@@ -118,7 +119,7 @@ O sistema está 100% funcional com:
 - ✅ Detecção automática de quedas
 - ✅ Alertas via e-mail (horário de Brasília)
 - ✅ Alertas via Telegram (instantâneos com formatação Markdown)
-- ✅ Dashboard em tempo real com estatísticas avançadas
+- ✅ Dashboard em tempo real com estatísticas avançadas e exportação para CSV
 - ✅ Monitoramento de heartbeat com previsões
-- ✅ Histórico completo de incidentes
+- ✅ Histórico completo de incidentes com fallback do watchdog e recuperação robusta de pushes (retry no Actions)
 - ✅ Sistema dual de notificações (Email + Telegram)

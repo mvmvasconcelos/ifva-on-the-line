@@ -1,5 +1,8 @@
 # IFVA On The Line?
 
+[![Status](https://img.shields.io/badge/Status-Concluído-1dfd5c)](https://github.com/mvmvasconcelos/ifva-on-the-line) [![Versão](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/mvmvasconcelos/ifva-on-the-line) [![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://react.dev/) [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/) [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions) [![Licença](https://img.shields.io/badge/licença-Apache_2.0-green.svg)](https://opensource.org/licenses/Apache-2.0) [![IFSul](https://img.shields.io/badge/IFSul-Venâncio%20Aires-195128)](https://vairao.ifsul.edu.br/)
+
+
 ## Sobre o Projeto
 
 O **IFVA On The Line?** é um sistema de monitoramento minimalista projetado para verificar a conectividade e disponibilidade de serviços do IFSul Câmpus Venâncio Aires.
@@ -17,7 +20,7 @@ A arquitetura do projeto é baseada em uma abordagem "serverless" utilizando rec
         *   Calcula o intervalo desde o sinal anterior. Se o gap for superior a 7 minutos, registra automaticamente um incidente no histórico com a duração calculada.
         *   Quando o sistema se recupera de um estado offline, registra o fim do incidente com a duração exata da queda.
     *   O workflow `Watchdog Monitor` roda periodicamente como **fallback**: se nenhum heartbeat chegar por um tempo prolongado, ele detecta a queda em andamento e dispara alertas via e-mail e Telegram.
-3.  **Frontend (Dashboard):** Uma interface web desenvolvida em React, hospedada no GitHub Pages, consome o arquivo JSON via GitHub API para exibir o status atual (Online/Offline) e o histórico de incidentes em tempo real.
+3.  **Frontend (Dashboard):** Uma interface web desenvolvida em React, hospedada no GitHub Pages, consome o arquivo JSON via GitHub API para exibir o status atual (Online/Offline) e o histórico de incidentes em tempo real. Os dados podem ser facilmente exportados em formato CSV.
 
 ## Tecnologias Utilizadas
 
