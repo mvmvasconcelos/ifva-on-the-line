@@ -17,8 +17,9 @@ export function StatsGrid({ history, lastSeen }) {
       icon: <Clock className="w-5 h-5 text-blue-500" />,
       desc: (
         <>
+          <span className="block mt-0.5">em {formatDateTimeShort(lastSeen)}</span>
           Atualizado a cada 5 min
-          {lastSeen && <span className="block mt-0.5">em {formatDateTimeShort(lastSeen)}</span>}
+          {lastSeen}
         </>
       )
     },

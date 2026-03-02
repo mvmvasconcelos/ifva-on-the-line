@@ -146,4 +146,19 @@ def main():
             
             # Alerta Telegram
             telegram_config = data.get('config', {}).get('telegram', {})
-            if telegram_config
+            if telegram_config.get('enabled') and telegram_config.get('chat_ids'):
+                telegram_msg = (
+                    f"🔴 *ALERTA: IFSul Offline*\n\n"
+                    f"O sistema não reporta contato há *{int(minutes_diff)} minutos*.\n"
+                    f"Último visto: {now_brasilia.strftime('%H:%M:%S')}"
+                )
+                send_telegram(telegram_msg, telegram_config.get('chat_ids'))
+        else:
+            print("Status OK.")
+            
+    except Exception as e:
+        print(f"Erro inesperado no watchdog: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
