@@ -46,7 +46,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
     - Payload: `{"event_type": "heartbeat"}`.
 - [x] Criar script PowerShell `heartbeat.ps1` para uso local/Windows.
 - [x] Configurar no `crontab -e` ou Task Scheduler:
-    - Periodicidade: `*/5 * * * *` (a cada 5 minutos).
+    - Periodicidade: `*/15 * * * *` (a cada 15 minutos).
 
 ## Fase 4: Automação com GitHub Actions
 
@@ -58,7 +58,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
         - Se estava `offline` (detectado pelo watchdog), calcula a duração exata e encerra o incidente.
     - Commit e Push automático das alterações no JSON.
 - [x] **Workflow B (watchdog.yml):**
-    - Gatilho: `schedule` (cron: `*/5 * * * *`) — atua como fallback.
+    - Gatilho: `schedule` (cron: `*/15 * * * *`) — atua como fallback.
     - Lógica: Se `now - last_seen > 10 minutos` e nenhum heartbeat chegou:
         - Atualizar `status: "offline"`.
         - Adicionar evento ao array `history`.

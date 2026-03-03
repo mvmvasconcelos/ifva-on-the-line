@@ -21,21 +21,29 @@ ChartJS.register(
 );
 
 export function IncidentsChart({ history }) {
-  // Aggregate incidents by date (last 7 days)
+  const formatDateLocal = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Aggregate incidents by date (last 7 days, local time)
   const last7Days = [...Array(7)].map((_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    return d.toISOString().split('T')[0];
+    return formatDateLocal(d);
   }).reverse();
 
   const incidentsByDate = history.reduce((acc, curr) => {
-    const date = curr.timestamp.split('T')[0];
+    const d = new Date(curr.timestamp);
+    const date = formatDateLocal(d);
     acc[date] = (acc[date] || 0) + 1;
     return acc;
   }, {});
 
   const data = {
-    labels: last7Days.map(d => new Date(d).toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric' })),
+    labels: last7Days.map(d => new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric' })),
     datasets: [
       {
         label: 'Quedas de Conexão',
