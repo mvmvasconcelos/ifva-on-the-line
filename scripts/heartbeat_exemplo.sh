@@ -6,7 +6,7 @@ REPO_NAME="ifva-on-the-line"
 PAT_TOKEN="YOUR_PAT_TOKEN" # Isso idealmente deve ser uma variável de ambiente ou segredo
 
 # Envia o evento de heartbeat para o GitHub Actions
-curl -X POST \
+curl --tlsv1.2 -X POST \
   -H "Accept: application/vnd.github.v3+json" \
   -H "Authorization: token $PAT_TOKEN" \
   https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/dispatches \
