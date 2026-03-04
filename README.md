@@ -1,6 +1,6 @@
 # IFVA On The Line?
 
-[![Status](https://img.shields.io/badge/Status-Concluído-1dfd5c)](https://github.com/mvmvasconcelos/ifva-on-the-line) [![Versão](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/mvmvasconcelos/ifva-on-the-line) [![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://react.dev/) [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/) [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions) [![Licença](https://img.shields.io/badge/licença-Apache_2.0-green.svg)](https://opensource.org/licenses/Apache-2.0) [![IFSul](https://img.shields.io/badge/IFSul-Venâncio%20Aires-195128)](https://vairao.ifsul.edu.br/)
+[![Status](https://img.shields.io/badge/Status-Concluído-1dfd5c)](https://github.com/mvmvasconcelos/ifva-on-the-line) [![Versão](https://img.shields.io/badge/version-1.5.0-blue.svg)](https://github.com/mvmvasconcelos/ifva-on-the-line) [![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://react.dev/) [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/) [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions) [![Licença](https://img.shields.io/badge/licença-Apache_2.0-green.svg)](https://opensource.org/licenses/Apache-2.0) [![IFSul](https://img.shields.io/badge/IFSul-Venâncio%20Aires-195128)](https://vairao.ifsul.edu.br/)
 
 
 ## Sobre o Projeto
@@ -8,6 +8,8 @@
 O **IFVA On The Line?** é um sistema de monitoramento minimalista projetado para verificar a conectividade e disponibilidade de serviços do IFSul Câmpus Venâncio Aires.
 
 O objetivo principal é detectar interrupções de conectividade ou energia no campus remotamente. O sistema funciona recebendo "batimentos cardíacos" (heartbeats) regulares de um servidor situado dentro da rede do campus. Se o sistema parar de receber esses sinais por um período determinado, ele assume que houve uma falha e dispara automaticamente alertas via **e-mail e Telegram** para os administradores.
+
+O sistema está acessível em https://mvmvasconcelos.github.io/ifva-on-the-line/
 
 ## Como Funciona
 
