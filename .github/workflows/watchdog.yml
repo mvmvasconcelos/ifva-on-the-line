@@ -32,6 +32,7 @@ jobs:
           ADMIN_EMAIL: ${{ secrets.GMAIL_USER }}
           TIMEOUT_MINUTES: "17"
         run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/scripts
           python scripts/watchdog.py
 
       - name: Comitar e enviar alterações

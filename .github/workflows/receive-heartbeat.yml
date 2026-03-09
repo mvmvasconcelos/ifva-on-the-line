@@ -22,72 +22,13 @@ jobs:
           python-version: '3.x'
 
       - name: Processar heartbeat e detectar quedas
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: |
-          python -c "
-          import json
-          import datetime
-          import sys
-
-          TIMEOUT_MINUTES = 17
-          JSON_PATH = 'data/status.json'
-
-          def parse_time(ts):
-              if ts.endswith('Z'):
-                  return datetime.datetime.fromisoformat(ts.replace('Z', '+00:00'))
-              return datetime.datetime.fromisoformat(ts)
-
-          try:
-              with open(JSON_PATH, 'r') as f:
-                  data = json.load(f)
-
-              now = datetime.datetime.now(datetime.timezone.utc)
-              now_iso = now.isoformat().replace('+00:00', 'Z')
-              last_seen_str = data.get('last_seen')
-              current_status = data.get('status', 'online')
-
-              if 'history' not in data:
-                  data['history'] = []
-
-              if last_seen_str:
-                  last_seen = parse_time(last_seen_str)
-                  gap_minutes = (now - last_seen).total_seconds() / 60
-                  print(f'Gap desde ultimo sinal: {gap_minutes:.1f} minutos')
-
-                  # CASO 1: Estava online, mas o gap indica que houve queda que o watchdog nao pegou
-                  if current_status == 'online' and gap_minutes > TIMEOUT_MINUTES:
-                      print(f'Queda nao registrada detectada! Gap de {gap_minutes:.1f} min.')
-                      incidente = {
-                          'timestamp': last_seen_str,
-                          'type': 'offline_detected',
-                          'duration_minutes': round(gap_minutes, 1)
-                      }
-                      data['history'].insert(0, incidente)
-
-                  # CASO 2: Estava oficialmente offline (watchdog ja registrou) - atualiza a duracao
-                  elif current_status == 'offline':
-                      print('Recuperando de estado OFFLINE registrado pelo watchdog.')
-                      if len(data['history']) > 0:
-                          ultimo_evento = data['history'][0]
-                          if ultimo_evento.get('type') in ('offline_detected', 'offline'):
-                              evento_ts = parse_time(ultimo_evento['timestamp'])
-                              duracao = (now - evento_ts).total_seconds() / 60
-                              ultimo_evento['duration_minutes'] = round(duracao, 1)
-                              print(f'Duracao da queda atualizada: {duracao:.1f} min')
-
-              # Atualiza status e last_seen
-              data['last_seen'] = now_iso
-              data['status'] = 'online'
-
-              with open(JSON_PATH, 'w') as f:
-                  json.dump(data, f, indent=2)
-
-              print('Status atualizado para ONLINE.')
-              print(json.dumps(data, indent=2))
-
-          except Exception as e:
-              print(f'Erro: {e}')
-              sys.exit(1)
-          "
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/scripts
+          python scripts/process_heartbeat.py
 
       - name: Comitar e enviar alterações
         run: |

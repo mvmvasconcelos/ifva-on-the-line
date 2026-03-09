@@ -1,77 +1,13 @@
 import json
 import datetime
 import os
-import smtplib
-from email.message import EmailMessage
 import sys
-import urllib.request
-import urllib.parse
+from notifier import send_email, send_telegram, get_brasilia_now
 
 # Configuração
 # Permite sobrescrever via variável de ambiente, padrão de 10 minutos
 TIMEOUT_MINUTES = int(os.environ.get('TIMEOUT_MINUTES', 10))
 JSON_PATH = 'data/status.json'
-
-def send_telegram(message, chat_ids=None):
-    """Envia uma mensagem via Telegram usando a API de Bot."""
-    bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
-    
-    if not bot_token:
-        print("Aviso: TELEGRAM_BOT_TOKEN não configurado. Pulando Telegram.")
-        return
-    
-    if not chat_ids:
-        print("Aviso: Nenhum chat_id do Telegram fornecido. Pulando Telegram.")
-        return
-    
-    base_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-    
-    for chat_id in chat_ids:
-        try:
-            params = {
-                'chat_id': chat_id,
-                'text': message,
-                'parse_mode': 'Markdown'
-            }
-            
-            data = urllib.parse.urlencode(params).encode('utf-8')
-            req = urllib.request.Request(base_url, data=data)
-            
-            with urllib.request.urlopen(req) as response:
-                result = json.loads(response.read().decode('utf-8'))
-                if result.get('ok'):
-                    print(f"✅ Telegram enviado com sucesso para o chat_id: {chat_id}")
-                else:
-                    print(f"❌ Erro no Telegram para {chat_id}: {result}")
-        except Exception as e:
-            print(f"❌ Erro ao enviar Telegram para {chat_id}: {e}")
-
-def send_email(subject, content, recipient_list=None):
-    """Envia um e-mail usando o servidor SMTP configurado."""
-    gmail_user = os.environ.get('GMAIL_USER')
-    gmail_password = os.environ.get('GMAIL_APP_PASSWORD')
-    admin_email = os.environ.get('ADMIN_EMAIL', gmail_user) # Fallback
-
-    if not gmail_user or not gmail_password:
-        print("Erro: Variáveis de ambiente GMAIL_USER ou GMAIL_APP_PASSWORD não configuradas.")
-        return
-
-    # Usa a lista de destinatários se fornecida, caso contrário usa o admin_email
-    recipients = recipient_list if recipient_list else [admin_email]
-    
-    msg = EmailMessage()
-    msg.set_content(content)
-    msg['Subject'] = subject
-    msg['From'] = f'Monitor IFVA <{gmail_user}>'
-    msg['To'] = ', '.join(recipients)
-
-    try:
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-            smtp.login(gmail_user, gmail_password)
-            smtp.send_message(msg)
-        print(f"E-mail enviado com sucesso para: {', '.join(recipients)}")
-    except Exception as e:
-        print(f"Erro ao enviar e-mail: {e}")
 
 def main():
     try:
@@ -128,8 +64,7 @@ def main():
                 json.dump(data, f, indent=2)
             
             # Conversão para horário de Brasília para os alertas
-            brasilia_tz = datetime.timezone(datetime.timedelta(hours=-3))
-            now_brasilia = now.astimezone(brasilia_tz)
+            now_brasilia = get_brasilia_now()
             
             alert_emails = data.get('config', {}).get('alert_emails', [])
             
