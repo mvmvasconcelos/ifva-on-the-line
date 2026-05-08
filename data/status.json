@@ -1,12 +1,12 @@
 {
-  "status": "offline",
-  "last_seen": "2026-05-08T11:45:09.231148Z",
+  "status": "online",
+  "last_seen": "2026-05-08T12:15:09.951696Z",
   "last_failure": null,
   "history": [
     {
       "timestamp": "2026-05-08T12:11:34.005375Z",
       "type": "offline_detected",
-      "duration_minutes": 0
+      "duration_minutes": 3.6
     },
     {
       "timestamp": "2026-05-08T10:58:26.370124Z",
