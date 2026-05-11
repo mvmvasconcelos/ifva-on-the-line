@@ -1,0 +1,19 @@
+[Unit]
+Description=IFVA On The Line – envia heartbeat com sonda para o GitHub
+Documentation=https://github.com/mvmvasconcelos/ifva-on-the-line
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# Arquivo com as variáveis secretas (modo 0600, dono root ou ifva)
+EnvironmentFile=/etc/ifva-monitor/env
+# Script principal
+ExecStart=/usr/local/bin/ifva-heartbeat.sh
+StandardOutput=journal
+StandardError=journal
+# Limite de tempo por execução
+TimeoutStartSec=60
+
+[Install]
+WantedBy=multi-user.target

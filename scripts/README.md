@@ -20,6 +20,41 @@ Arquivos locais usados:
 - `QUEUE_FILE` para backlog persistente
 - `data/incidents.json` para incidentes consolidados
 
+### Instalação com systemd (Ubuntu)
+
+```bash
+# 1. Copiar o script para o caminho esperado pelo service
+sudo cp scripts/heartbeat_v2.sh /usr/local/bin/ifva-heartbeat.sh
+sudo chmod +x /usr/local/bin/ifva-heartbeat.sh
+
+# 2. Criar o arquivo de variáveis secretas (apenas root lê)
+sudo mkdir -p /etc/ifva-monitor
+sudo tee /etc/ifva-monitor/env > /dev/null <<EOF
+GITHUB_TOKEN=ghp_SeuTokenAqui
+GITHUB_OWNER=mvmvasconcelos
+GITHUB_REPO=ifva-on-the-line
+EOF
+sudo chmod 600 /etc/ifva-monitor/env
+sudo chown root:root /etc/ifva-monitor/env
+
+# 3. Instalar as unidades systemd
+sudo cp scripts/ifva-heartbeat.service /etc/systemd/system/
+sudo cp scripts/ifva-heartbeat.timer   /etc/systemd/system/
+sudo systemctl daemon-reload
+
+# 4. Ativar e iniciar o timer
+sudo systemctl enable --now ifva-heartbeat.timer
+
+# 5. Verificar status
+sudo systemctl status ifva-heartbeat.timer
+sudo systemctl list-timers ifva-heartbeat.timer
+
+# 6. Ver logs em tempo real
+sudo journalctl -fu ifva-heartbeat.service
+```
+
+> **Nota:** se já existia um cron job para `heartbeat_v2.sh`, remova-o após confirmar que o timer está disparando corretamente.
+
 ### generate-password-hash.ps1
 Gera hash SHA-256 de uma senha para uso no painel do dashboard.
 

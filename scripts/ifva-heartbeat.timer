@@ -1,0 +1,15 @@
+[Unit]
+Description=IFVA On The Line – timer do heartbeat (a cada 5 min)
+Requires=ifva-heartbeat.service
+
+[Timer]
+# Dispara 30 segundos após o boot e depois a cada 5 minutos
+OnBootSec=30s
+OnUnitActiveSec=5min
+# Tolerância de jitter para distribuir carga no início do minuto
+AccuracySec=10s
+# Persiste o timer mesmo se o sistema ficou suspenso
+Persistent=true
+
+[Install]
+WantedBy=timers.target
