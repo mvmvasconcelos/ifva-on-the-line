@@ -1,277 +1,493 @@
 {
   "status": "online",
-  "last_seen": "2026-05-11T15:00:21.271370Z",
+  "last_seen": "2026-05-11T15:15:20.234309Z",
   "last_failure": null,
   "history": [
     {
       "timestamp": "2026-05-11T12:30:15.744369Z",
       "type": "offline_detected",
-      "duration_minutes": 30.0
+      "duration_minutes": 30.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-11T04:19:00.408492Z",
       "type": "offline_detected",
-      "duration_minutes": 431.2
+      "duration_minutes": 431.2,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-08T22:00:15.822549Z",
       "type": "offline_detected",
-      "duration_minutes": 29.9
+      "duration_minutes": 29.9,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-08T20:42:37.478133Z",
       "type": "offline_detected",
-      "duration_minutes": 77.6
+      "duration_minutes": 77.6,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-08T19:15:16.831812Z",
       "type": "offline_detected",
-      "duration_minutes": 29.9
+      "duration_minutes": 29.9,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-08T12:11:34.005375Z",
       "type": "offline_detected",
-      "duration_minutes": 3.6
+      "duration_minutes": 3.6,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-08T10:58:26.370124Z",
       "type": "offline_detected",
-      "duration_minutes": 1.7
+      "duration_minutes": 1.7,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-08T00:00:08.690525Z",
       "type": "offline_detected",
-      "duration_minutes": 30.1
+      "duration_minutes": 30.1,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-07T23:36:35.681377Z",
       "type": "offline_detected",
-      "duration_minutes": 8.6
+      "duration_minutes": 8.6,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-07T20:45:18.100083Z",
       "type": "offline_detected",
-      "duration_minutes": 30.0
+      "duration_minutes": 30.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-07T18:30:32.625022Z",
       "type": "offline_detected",
-      "duration_minutes": 44.7
+      "duration_minutes": 44.7,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-07T16:22:34.217330Z",
       "type": "offline_detected",
-      "duration_minutes": 7.6
+      "duration_minutes": 7.6,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-06T21:37:23.231826Z",
       "type": "offline_detected",
-      "duration_minutes": 847.9
+      "duration_minutes": 847.9,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-06T15:30:28.711424Z",
       "type": "offline_detected",
-      "duration_minutes": 29.8
+      "duration_minutes": 29.8,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-06T13:33:00.151778Z",
       "type": "offline_detected",
-      "duration_minutes": 42.4
+      "duration_minutes": 42.4,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-06T13:15:16.033022Z",
       "type": "offline_detected",
-      "duration_minutes": 17.7
+      "duration_minutes": 17.7,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-06T12:15:17.223736Z",
       "type": "offline_detected",
-      "duration_minutes": 30.1
+      "duration_minutes": 30.1,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-06T11:45:16.537251Z",
       "type": "offline_detected",
-      "duration_minutes": 30.0
+      "duration_minutes": 30.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-06T00:00:08.462045Z",
       "type": "offline_detected",
-      "duration_minutes": 30.1
+      "duration_minutes": 30.1,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-05T22:45:11.378421Z",
       "type": "offline_detected",
-      "duration_minutes": 30.0
+      "duration_minutes": 30.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-05T22:39:05.114550Z",
       "type": "offline_detected",
-      "duration_minutes": 6.1
+      "duration_minutes": 6.1,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-05T16:45:24.579640Z",
       "type": "offline_detected",
-      "duration_minutes": 29.8
+      "duration_minutes": 29.8,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-05T15:00:14.784545Z",
       "type": "offline_detected",
-      "duration_minutes": 45.0
+      "duration_minutes": 45.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-05T14:31:19.673434Z",
       "type": "offline_detected",
-      "duration_minutes": 28.9
+      "duration_minutes": 28.9,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-05T13:30:24.845821Z",
       "type": "offline_detected",
-      "duration_minutes": 29.9
+      "duration_minutes": 29.9,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-05T12:58:11.675301Z",
       "type": "offline_detected",
-      "duration_minutes": 2.1
+      "duration_minutes": 2.1,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-05T07:45:15.485794Z",
       "type": "offline_detected",
-      "duration_minutes": 30.1
+      "duration_minutes": 30.1,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-04T11:00:08.923637Z",
       "type": "offline_detected",
-      "duration_minutes": 30.1
+      "duration_minutes": 30.1,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-05-04T09:00:15.848630Z",
       "type": "offline_detected",
-      "duration_minutes": 29.9
+      "duration_minutes": 29.9,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-04-30T19:00:15.426986Z",
       "type": "offline_detected",
-      "duration_minutes": 29.9
+      "duration_minutes": 29.9,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-04-24T11:00:08.638277Z",
       "type": "offline_detected",
-      "duration_minutes": 45.0
+      "duration_minutes": 45.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-04-23T22:05:59.593517Z",
       "type": "offline_detected",
-      "duration_minutes": 24.1
+      "duration_minutes": 24.1,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-04-23T16:49:53.168197Z",
       "type": "offline_detected",
-      "duration_minutes": 10.3
+      "duration_minutes": 10.3,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-04-23T14:15:12.516460Z",
       "type": "offline_detected",
-      "duration_minutes": 23.0
+      "duration_minutes": 23.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-04-19T03:46:38.718979Z",
       "type": "offline_detected",
-      "duration_minutes": 4798.5
+      "duration_minutes": 4798.5,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-04-16T19:00:10.053077Z",
       "type": "offline_detected",
-      "duration_minutes": 30.0
+      "duration_minutes": 30.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-04-14T19:15:11.234852Z",
       "type": "offline_detected",
-      "duration_minutes": 45.0
+      "duration_minutes": 45.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-04-13T02:00:13.607950Z",
       "type": "offline_detected",
-      "duration_minutes": 30.0
+      "duration_minutes": 30.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-04-11T10:58:18.744932Z",
       "type": "offline_detected",
-      "duration_minutes": 1.8
+      "duration_minutes": 1.8,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-04-08T15:15:39.146775Z",
       "type": "offline_detected",
-      "duration_minutes": 17.2
+      "duration_minutes": 17.2,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-04-01T19:15:09.344172Z",
       "type": "offline_detected",
-      "duration_minutes": 30.0
+      "duration_minutes": 30.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-28T09:51:22.696845Z",
       "type": "offline_detected",
-      "duration_minutes": 2963.9
+      "duration_minutes": 2963.9,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-22T02:00:08.680654Z",
       "type": "offline_detected",
-      "duration_minutes": 30.0
+      "duration_minutes": 30.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-21T17:00:07.878617Z",
       "type": "offline_detected",
-      "duration_minutes": 30.0
+      "duration_minutes": 30.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-20T11:59:04.424603Z",
       "type": "offline_detected",
-      "duration_minutes": 61.1
+      "duration_minutes": 61.1,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-19T01:00:15.054080Z",
       "type": "offline_detected",
-      "duration_minutes": 29.9
+      "duration_minutes": 29.9,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-18T21:05:49.612330Z",
       "type": "offline_detected",
-      "duration_minutes": 69.4
+      "duration_minutes": 69.4,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-18T20:00:09.094906Z",
       "type": "offline_detected",
-      "duration_minutes": 30.0
+      "duration_minutes": 30.0,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-18T18:10:49.951180Z",
       "type": "offline_detected",
-      "duration_minutes": 94.6
+      "duration_minutes": 94.6,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-18T10:30:48.335458Z",
       "type": "offline_detected",
-      "duration_minutes": 89.4
+      "duration_minutes": 89.4,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-17T12:00:35.703746Z",
       "type": "offline_detected",
-      "duration_minutes": 374.7
+      "duration_minutes": 374.7,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-16T18:01:25.154866Z",
       "type": "offline_detected",
-      "duration_minutes": 193.7
+      "duration_minutes": 193.7,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-05T22:30:07.580197Z",
       "type": "offline_detected",
-      "duration_minutes": 31.1
+      "duration_minutes": 31.1,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     },
     {
       "timestamp": "2026-03-05T16:15:10.379990Z",
       "type": "offline_detected",
-      "duration_minutes": 76.5
+      "duration_minutes": 76.5,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "state": "closed",
+      "sample_count": 0
     }
   ],
   "config": {
@@ -288,5 +504,20 @@
       "subject": "\u26a0\ufe0f ALERTA: Sistema Offline",
       "body": "O sistema de monitoramento detectou que o campus est\u00e1 OFFLINE.\n\n\u00daltimo sinal recebido: {last_seen}\nTempo decorrido: {elapsed_time}\n\nPor favor, verifique a conectividade e energia do campus."
     }
-  }
+  },
+  "v2": {
+    "cause_provisional": "unknown",
+    "cause_confidence": "low",
+    "last_probe": {
+      "timestamp": null,
+      "gateway_ok": null,
+      "internet_ok": null,
+      "dns_ok": null,
+      "pending_count": 0,
+      "seq": null
+    },
+    "pending_count": 0,
+    "batch_count": 0
+  },
+  "status_detail": "online"
 }
