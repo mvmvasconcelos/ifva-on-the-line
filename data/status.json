@@ -1,6 +1,6 @@
 {
   "status": "online",
-  "last_seen": "2026-05-11T17:25:54.284040Z",
+  "last_seen": "2026-05-11T17:31:00.888955Z",
   "last_failure": null,
   "history": [
     {
@@ -13,6 +13,33 @@
       "sample_count": 2
     },
     {
+      "timestamp": "2026-05-11T15:28:00.000000Z",
+      "type": "offline_detected",
+      "duration_minutes": 8.3,
+      "cause_provisional": "unknown",
+      "cause_final": "interno_servidor",
+      "state": "closed",
+      "sample_count": 1
+    },
+    {
+      "timestamp": "2026-05-11T14:12:00.000000Z",
+      "type": "offline_detected",
+      "duration_minutes": 35.5,
+      "cause_provisional": "interno",
+      "cause_final": "interno_misto",
+      "state": "closed",
+      "sample_count": 7
+    },
+    {
+      "timestamp": "2026-05-11T13:05:00.000000Z",
+      "type": "offline_detected",
+      "duration_minutes": 52.7,
+      "cause_provisional": "interno",
+      "cause_final": "interno_firewall",
+      "state": "closed",
+      "sample_count": 10
+    },
+    {
       "timestamp": "2026-05-11T12:30:15.744369Z",
       "type": "offline_detected",
       "duration_minutes": 30.0,
@@ -20,6 +47,15 @@
       "cause_final": "unknown",
       "state": "closed",
       "sample_count": 0
+    },
+    {
+      "timestamp": "2026-05-11T11:38:00.000000Z",
+      "type": "offline_detected",
+      "duration_minutes": 14.3,
+      "cause_provisional": "externo",
+      "cause_final": "externo",
+      "state": "closed",
+      "sample_count": 3
     },
     {
       "timestamp": "2026-05-11T04:19:00.408492Z",
@@ -518,12 +554,12 @@
     "cause_provisional": "unknown",
     "cause_confidence": "low",
     "last_probe": {
-      "timestamp": "2026-05-11T17:25:44Z",
+      "timestamp": "2026-05-11T17:30:46Z",
       "gateway_ok": true,
       "internet_ok": true,
       "dns_ok": true,
       "pending_count": 1,
-      "seq": 15
+      "seq": 16
     },
     "pending_count": 1,
     "batch_count": 1
