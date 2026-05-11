@@ -141,3 +141,16 @@ O sistema v1 está 100% funcional com:
 - [x] **Credenciais seguras:** Token armazenado em `/etc/ifva-monitor/env` (modo 0600, fora do repositório).
 
 ## ✅ Sistema v2 Completo e Operacional
+
+---
+
+## Fase 9: Melhorias de Confiabilidade (v2.1)
+
+- [x] **#1 — Segunda sonda de internet:** `heartbeat_v2.sh` testa `1.1.1.1` **e** `8.8.8.8`; `internet_ok=false` só se **ambas** falharem, eliminando falsos positivos por indisponibilidade de um único host.
+- [x] **#3 — Confirmação dupla no watchdog:** Watchdog exige **dois ciclos consecutivos** sem heartbeat antes de abrir incidente e enviar alerta. Campo `watchdog_pending_since` em `status.json` registra a pendência; `process_heartbeat.py` cancela a pendência se o heartbeat chegar antes da confirmação.
+- [x] **#4 — Auto-heal do timer:** Ao enviar heartbeat com sucesso, o script verifica se `ifva-heartbeat.timer` está ativo e o reinicia automaticamente caso tenha parado (`systemctl restart`).
+- [x] **#5 — Limite de fila:** Após cada append à fila, `queue.jsonl` é truncada para no máximo **100 linhas** (`tail -100`) para evitar crescimento ilimitado em caso de falha prolongada de conectividade.
+- [x] **#7 — Detecção de gap de sequência:** `process_heartbeat.py` compara o `seq` mínimo do batch recebido com `data['v2']['last_seq']`; calcula `missed_batches` e armazena em `status.json` para auditoria de eventos perdidos.
+- [x] **#8 — Aviso de dados obsoletos no dashboard:** `StatusHeader.jsx` exibe banner amarelo quando `last_seen` é mais antigo que **2 horas**, sinalizando possível falha no sistema de coleta.
+
+## ✅ Sistema v2.1 Completo e Operacional
