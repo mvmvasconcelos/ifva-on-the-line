@@ -9,6 +9,7 @@ TIMEOUT_MINUTES = 17
 JSON_PATH = 'data/status.json'
 INCIDENTS_PATH = 'data/incidents.json'
 HISTORY_LIMIT = 200
+INCIDENTS_ROTATION_LIMIT = 200
 
 
 def to_bool(value):
@@ -259,6 +260,14 @@ def close_latest_open_incident(incidents, ended_at, duration_minutes, cause_fina
     return True
 
 
+def rotate_incidents(incidents):
+    open_incs = [inc for inc in incidents if isinstance(inc, dict) and inc.get('state') == 'open']
+    closed_incs = [inc for inc in incidents if isinstance(inc, dict) and inc.get('state') != 'open']
+    if len(closed_incs) > INCIDENTS_ROTATION_LIMIT:
+        closed_incs = closed_incs[-INCIDENTS_ROTATION_LIMIT:]
+    return closed_incs + open_incs
+
+
 def main():
     try:
         data = load_json_file(JSON_PATH, {})
@@ -319,15 +328,50 @@ def main():
                     else:
                         duration_minutes = 0.0
 
-                    final_cause = infer_final_cause(batch_events, fallback_cause=latest_open.get('cause_provisional', 'unknown'))
-                    if final_cause == 'unknown':
-                        final_cause = latest_open.get('cause_provisional', 'unknown')
-                    close_latest_open_incident(incidents, now_iso, duration_minutes, final_cause, len(batch_events))
-                    print(f'Duração da queda atualizada: {duration_minutes:.1f} min')
+                    prev_provisional = latest_open.get('cause_provisional', 'unknown')
+                final_cause = infer_final_cause(batch_events, fallback_cause=prev_provisional)
+                if final_cause == 'unknown':
+                    final_cause = prev_provisional
+                close_latest_open_incident(incidents, now_iso, duration_minutes, final_cause, len(batch_events))
+                print(f'Duração da queda atualizada: {duration_minutes:.1f} min')
+
+                if final_cause != prev_provisional and prev_provisional != 'unknown' and final_cause != 'unknown':
+                    cause_labels = {
+                        'externo':           'Problema externo (internet)',
+                        'interno':           'Problema interno',
+                        'interno_firewall':  'Problema interno (firewall)',
+                        'interno_servidor':  'Servidor sem resposta',
+                        'interno_misto':     'Problema interno (misto)',
+                    }
+                    label_prev = cause_labels.get(prev_provisional, prev_provisional)
+                    label_final = cause_labels.get(final_cause, final_cause)
+                    now_brasilia_rc = get_brasilia_now()
+                    alert_emails = data.get('config', {}).get('alert_emails', [])
+                    subject = f'🔄 RECLASSIFICADO: {label_prev} → {label_final}'
+                    body = (
+                        f'A causa da queda foi reclassificada após análise dos dados coletados.\n\n'
+                        f'Causa provisória: {label_prev}\n'
+                        f'Causa final:      {label_final}\n'
+                        f'Duração da queda: {int(duration_minutes)} minutos\n'
+                        f'Voltou em: {now_brasilia_rc.strftime("%d/%m/%Y às %H:%M:%S")} (Brasília)\n'
+                    )
+                    send_email(subject, body, alert_emails if alert_emails else None)
+                    telegram_config = data.get('config', {}).get('telegram', {})
+                    if telegram_config.get('enabled') and telegram_config.get('chat_ids'):
+                        brasilia_rc_time = now_brasilia_rc.strftime('%H:%M:%S')
+                        telegram_msg = (
+                            f'🔄 *RECLASSIFICADO*\n\n'
+                            f'Causa da queda corrigida:\n'
+                            f'Antes: _{label_prev}_\n'
+                            f'Agora: *{label_final}*\n'
+                            f'Voltou às: {brasilia_rc_time}'
+                        )
+                        send_telegram(telegram_msg, telegram_config.get('chat_ids'))
 
         data['last_seen'] = now_iso
         data['status'] = 'online'
         update_v2_fields(data, payload, batch_events)
+        incidents = rotate_incidents(incidents)
         data['history'] = project_history_from_incidents(incidents)
 
         save_json_file(JSON_PATH, data)

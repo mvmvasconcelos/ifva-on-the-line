@@ -6,6 +6,7 @@ import sys
 from notifier import get_brasilia_now, send_email, send_telegram
 
 TIMEOUT_MINUTES = int(os.environ.get('TIMEOUT_MINUTES', 10))
+MERGE_WINDOW_MINUTES = 20
 JSON_PATH = 'data/status.json'
 INCIDENTS_PATH = 'data/incidents.json'
 HISTORY_LIMIT = 200
@@ -169,9 +170,29 @@ def main():
             data['v2']['cause_provisional'] = cause_provisional
             data['v2']['cause_confidence'] = confidence
 
-            append_open_incident(incidents, last_seen_str, now.isoformat().replace('+00:00', 'Z'), cause_provisional)
+            detected_at_iso = now.isoformat().replace('+00:00', 'Z')
+            last_closed = next(
+                (inc for inc in reversed(incidents) if isinstance(inc, dict) and inc.get('state') == 'closed'),
+                None
+            )
+            merged = False
+            if last_closed and last_closed.get('ended_at'):
+                try:
+                    ended_dt = parse_time(last_closed['ended_at'])
+                    if (now - ended_dt).total_seconds() / 60 <= MERGE_WINDOW_MINUTES:
+                        last_closed['state'] = 'open'
+                        last_closed['ended_at'] = None
+                        last_closed['duration_minutes'] = 0
+                        if cause_provisional != 'unknown':
+                            last_closed['cause_provisional'] = cause_provisional
+                        print(f'Incidente anterior reaberto (janela de {MERGE_WINDOW_MINUTES} min).')
+                        merged = True
+                except Exception:
+                    pass
+            if not merged:
+                append_open_incident(incidents, last_seen_str, detected_at_iso, cause_provisional)
             data['history'] = project_history_from_incidents(incidents)
-            incident_store['updated_at'] = now.isoformat().replace('+00:00', 'Z')
+            incident_store['updated_at'] = detected_at_iso
             save_json_file(INCIDENTS_PATH, incident_store)
             save_json_file(JSON_PATH, data)
 
