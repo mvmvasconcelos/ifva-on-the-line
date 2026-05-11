@@ -690,6 +690,19 @@
       "sample_count": 0
     },
     {
+      "id": "test-2026-05-11T11:38:00Z-externo",
+      "timestamp": "2026-05-11T11:38:00.000000Z",
+      "started_at": "2026-05-11T11:38:00.000000Z",
+      "detected_at": "2026-05-11T11:53:04.000000Z",
+      "ended_at": "2026-05-11T11:52:17.000000Z",
+      "state": "closed",
+      "type": "offline_detected",
+      "duration_minutes": 14.3,
+      "cause_provisional": "externo",
+      "cause_final": "externo",
+      "sample_count": 3
+    },
+    {
       "id": "legacy-53-2026-05-11T12:30:15.744369Z",
       "timestamp": "2026-05-11T12:30:15.744369Z",
       "started_at": "2026-05-11T12:30:15.744369Z",
@@ -701,6 +714,45 @@
       "cause_provisional": "unknown",
       "cause_final": "unknown",
       "sample_count": 0
+    },
+    {
+      "id": "test-2026-05-11T13:05:00Z-interno_firewall",
+      "timestamp": "2026-05-11T13:05:00.000000Z",
+      "started_at": "2026-05-11T13:05:00.000000Z",
+      "detected_at": "2026-05-11T13:20:11.000000Z",
+      "ended_at": "2026-05-11T13:57:43.000000Z",
+      "state": "closed",
+      "type": "offline_detected",
+      "duration_minutes": 52.7,
+      "cause_provisional": "interno",
+      "cause_final": "interno_firewall",
+      "sample_count": 10
+    },
+    {
+      "id": "test-2026-05-11T14:12:00Z-interno_misto",
+      "timestamp": "2026-05-11T14:12:00.000000Z",
+      "started_at": "2026-05-11T14:12:00.000000Z",
+      "detected_at": "2026-05-11T14:27:08.000000Z",
+      "ended_at": "2026-05-11T14:47:31.000000Z",
+      "state": "closed",
+      "type": "offline_detected",
+      "duration_minutes": 35.5,
+      "cause_provisional": "interno",
+      "cause_final": "interno_misto",
+      "sample_count": 7
+    },
+    {
+      "id": "test-2026-05-11T15:28:00Z-interno_servidor",
+      "timestamp": "2026-05-11T15:28:00.000000Z",
+      "started_at": "2026-05-11T15:28:00.000000Z",
+      "detected_at": "2026-05-11T15:43:02.000000Z",
+      "ended_at": "2026-05-11T15:36:19.000000Z",
+      "state": "closed",
+      "type": "offline_detected",
+      "duration_minutes": 8.3,
+      "cause_provisional": "unknown",
+      "cause_final": "interno_servidor",
+      "sample_count": 1
     },
     {
       "id": "2026-05-11T16:00:15.624656Z-2026-05-11T16:23:07.651517Z-closed",
