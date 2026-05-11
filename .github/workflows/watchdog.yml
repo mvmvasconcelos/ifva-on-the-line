@@ -40,13 +40,14 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          # Tenta adicionar o arquivo data/status.json se ele existir
+          # Tenta adicionar os arquivos de dados se existirem
           if [ -f data/status.json ]; then
             git add data/status.json
           else
             echo "Arquivo data/status.json não encontrado"
             exit 1
           fi
+          [ -f data/incidents.json ] && git add data/incidents.json || true
           
           # Verifica se há algo para comitar
           if git diff --staged --quiet; then
