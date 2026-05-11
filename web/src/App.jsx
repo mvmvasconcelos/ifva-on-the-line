@@ -133,7 +133,7 @@ function App() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           {isOpen
                             ? <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-700">aberto</span>
-                            : <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-700">fechado</span>
+                            : <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-700">resolvido</span>
                           }
                         </td>
                       </tr>
