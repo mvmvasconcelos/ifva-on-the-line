@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Heartbeat v2: coleta sonda local, persiste fila e envia o ultimo snapshot ao GitHub.
+# Heartbeat v2: coleta sonda local, persiste fila e envia o lote completo ao GitHub.
 # Requisitos:
 # - GITHUB_TOKEN
 # - GITHUB_OWNER (ex.: mvmvasconcelos)
@@ -59,7 +59,6 @@ else
 fi
 
 TS="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-
 EVENT_LINE=$(cat <<EOF_EVENT
 {"ts":"$TS","seq":$SEQ,"probe":{"gateway_ok":$GATEWAY_OK,"internet_ok":$INTERNET_OK,"dns_ok":$DNS_OK}}
 EOF_EVENT
@@ -67,15 +66,27 @@ EOF_EVENT
 
 printf '%s\n' "$EVENT_LINE" >> "$QUEUE_FILE"
 
-PENDING_COUNT="$(wc -l < "$QUEUE_FILE" 2>/dev/null || echo 0)"
+PENDING_COUNT="$(grep -c '^{' "$QUEUE_FILE" 2>/dev/null || echo 0)"
 if [[ ! "$PENDING_COUNT" =~ ^[0-9]+$ ]]; then
   PENDING_COUNT=1
 fi
 
-LAST_EVENT="$(tail -n 1 "$QUEUE_FILE" 2>/dev/null || true)"
-if [[ -z "$LAST_EVENT" ]]; then
-  LAST_EVENT="$EVENT_LINE"
-fi
+QUEUE_JSON="$(python3 - "$QUEUE_FILE" <<'PY'
+import json
+import pathlib
+import sys
+
+queue_file = pathlib.Path(sys.argv[1])
+items = []
+if queue_file.exists():
+    for line in queue_file.read_text().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        items.append(json.loads(line))
+print(json.dumps(items, separators=(',', ':')))
+PY
+)"
 
 API_URL="https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/dispatches"
 JSON_PAYLOAD=$(cat <<EOF_PAYLOAD
@@ -91,9 +102,7 @@ JSON_PAYLOAD=$(cat <<EOF_PAYLOAD
       "internet_ok": $INTERNET_OK,
       "dns_ok": $DNS_OK
     },
-    "batch": [
-      $LAST_EVENT
-    ]
+    "batch": $QUEUE_JSON
   }
 }
 EOF_PAYLOAD
