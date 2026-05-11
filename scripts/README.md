@@ -4,7 +4,25 @@ Este diretório contém scripts utilitários para o sistema de monitoramento.
 
 ## Scripts Disponíveis
 
-### 🔐 generate-password-hash.ps1
+### � heartbeat_v2.sh
+Script de heartbeat v2 com sondas de causa (gateway/internet/dns) via `client_payload` no `repository_dispatch`.
+
+**Uso básico:**
+```bash
+export GITHUB_TOKEN="..."
+export GITHUB_OWNER="mvmvasconcelos"
+export GITHUB_REPO="ifva-on-the-line"
+./scripts/heartbeat_v2.sh
+```
+
+**Observações:**
+- Mantém contador local de sequência para idempotência (`SEQ_FILE`, padrão: `/var/lib/ifva-monitor/seq`)
+- Usa fila local persistente em JSONL (`QUEUE_FILE`, padrão: `/var/lib/ifva-monitor/queue.jsonl`)
+- `pending_count` reflete o backlog local quando o envio ao GitHub falha
+
+---
+
+### �🔐 generate-password-hash.ps1
 Gera hash SHA-256 de uma senha para uso no painel de configurações do dashboard.
 
 **Uso:**

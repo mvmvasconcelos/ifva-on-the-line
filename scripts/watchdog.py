@@ -50,11 +50,18 @@ def main():
             print(f"TEMPO LIMITE EXCEDIDO ({TIMEOUT_MINUTES}m). Definindo status como OFFLINE.")
             
             data['status'] = 'offline'
+            data['status_detail'] = 'offline_suspeito'
+            if 'v2' not in data or not isinstance(data['v2'], dict):
+                data['v2'] = {}
+            data['v2']['cause_provisional'] = data['v2'].get('cause_provisional', 'unknown')
+            data['v2']['cause_confidence'] = data['v2'].get('cause_confidence', 'low')
             
             incident = {
                 'timestamp': now.isoformat().replace('+00:00', 'Z'),
                 'type': 'offline_detected',
-                'duration_minutes': 0
+                'duration_minutes': 0,
+                'cause_provisional': data['v2']['cause_provisional'],
+                'cause_final': None
             }
             if 'history' not in data:
                 data['history'] = []
