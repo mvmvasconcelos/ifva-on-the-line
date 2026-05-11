@@ -160,6 +160,15 @@ def main():
         current_status = data.get('status', 'offline')
 
         if minutes_diff > TIMEOUT_MINUTES and current_status == 'online':
+            pending_since = data.get('watchdog_pending_since')
+            if not pending_since:
+                # Primeira detecção: registra pendência e aguarda confirmação no próximo ciclo
+                data['watchdog_pending_since'] = now.isoformat().replace('+00:00', 'Z')
+                save_json_file(JSON_PATH, data)
+                print(f'Primeira detecção de timeout ({minutes_diff:.1f} min). Aguardando confirmação no próximo ciclo.')
+                return
+            # Segunda detecção confirmada: limpa pendência e dispara alerta
+            data.pop('watchdog_pending_since', None)
             print(f'TEMPO LIMITE EXCEDIDO ({TIMEOUT_MINUTES}m). Definindo status como OFFLINE.')
             cause_provisional, confidence = infer_provisional_cause_from_probe(latest_probe(data))
 
@@ -220,6 +229,10 @@ def main():
                 )
                 send_telegram(telegram_msg, telegram_config.get('chat_ids'))
         else:
+            if data.get('watchdog_pending_since'):
+                data.pop('watchdog_pending_since', None)
+                save_json_file(JSON_PATH, data)
+                print('Sinal recebido antes da confirmação. Pendência cancelada.')
             print('Status OK.')
 
     except Exception as err:

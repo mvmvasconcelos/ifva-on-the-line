@@ -17,6 +17,7 @@ set -u
 
 FIREWALL_IP="${FIREWALL_IP:-128.1.0.200}"
 INTERNET_TARGET="${INTERNET_TARGET:-1.1.1.1}"
+INTERNET_TARGET2="${INTERNET_TARGET2:-8.8.8.8}"
 DNS_TARGET="${DNS_TARGET:-github.com}"
 STATE_DIR="${STATE_DIR:-/var/lib/ifva-monitor}"
 SEQ_FILE="${SEQ_FILE:-$STATE_DIR/seq}"
@@ -46,7 +47,7 @@ else
   GATEWAY_OK=false
 fi
 
-if ping -c 1 -W 2 "$INTERNET_TARGET" >/dev/null 2>&1; then
+if ping -c 1 -W 2 "$INTERNET_TARGET" >/dev/null 2>&1 || ping -c 1 -W 2 "$INTERNET_TARGET2" >/dev/null 2>&1; then
   INTERNET_OK=true
 else
   INTERNET_OK=false
@@ -65,6 +66,12 @@ EOF_EVENT
 )
 
 printf '%s\n' "$EVENT_LINE" >> "$QUEUE_FILE"
+
+# Limita a fila a 100 eventos para evitar crescimento ilimitado
+QUEUE_LINES=$(wc -l < "$QUEUE_FILE" 2>/dev/null || echo 0)
+if [[ "$QUEUE_LINES" -gt 100 ]]; then
+  tail -100 "$QUEUE_FILE" > "${QUEUE_FILE}.tmp" && mv "${QUEUE_FILE}.tmp" "$QUEUE_FILE"
+fi
 
 PENDING_COUNT="$(grep -c '^{' "$QUEUE_FILE" 2>/dev/null || echo 0)"
 if [[ ! "$PENDING_COUNT" =~ ^[0-9]+$ ]]; then
@@ -123,6 +130,11 @@ if [[ "$HTTP_CODE" = "204" ]]; then
   : > "$QUEUE_FILE"
   echo "Heartbeat v2 enviado com sucesso (seq=$SEQ, pending=$PENDING_COUNT, gateway_ok=$GATEWAY_OK, internet_ok=$INTERNET_OK, dns_ok=$DNS_OK)."
   rm -f /tmp/ifva_dispatch_response.txt
+  # Auto-heal: reinicia o timer caso tenha parado por algum motivo
+  if ! systemctl is-active --quiet ifva-heartbeat.timer 2>/dev/null; then
+    systemctl restart ifva-heartbeat.timer 2>/dev/null || true
+    echo "Timer reiniciado automaticamente."
+  fi
   exit 0
 fi
 

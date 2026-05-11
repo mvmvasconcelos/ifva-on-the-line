@@ -217,6 +217,23 @@ def update_v2_fields(data, payload, batch_events):
     data['v2']['batch_count'] = len(batch_events)
     data['status_detail'] = 'online'
 
+    # Detecta gap de sequência (eventos da fila que não chegaram ao GitHub)
+    last_seq = data['v2'].get('last_seq', 0) or 0
+    seq_values = [e['seq'] for e in batch_events if isinstance(e, dict) and isinstance(e.get('seq'), int)]
+    if seq_values:
+        min_seq = min(seq_values)
+        max_seq = max(seq_values)
+        missed = max(0, min_seq - last_seq - 1) if last_seq > 0 else 0
+        if missed > 0:
+            print(f'Aviso: {missed} evento(s) perdido(s) na fila (seq esperado: {last_seq + 1}, primeiro recebido: {min_seq})')
+        data['v2']['missed_batches'] = missed
+        data['v2']['last_seq'] = max_seq
+    else:
+        data['v2']['missed_batches'] = 0
+        seq_payload = payload.get('seq')
+        if isinstance(seq_payload, int) and seq_payload > 0:
+            data['v2']['last_seq'] = seq_payload
+
 
 def build_recovery_incident(last_seen_str, now_iso, payload, batch_events):
     provisional_cause, _ = infer_provisional_cause(payload)
@@ -370,6 +387,7 @@ def main():
 
         data['last_seen'] = now_iso
         data['status'] = 'online'
+        data.pop('watchdog_pending_since', None)  # cancela pendência de confirmação dupla do watchdog
         update_v2_fields(data, payload, batch_events)
         incidents = rotate_incidents(incidents)
         data['history'] = project_history_from_incidents(incidents)

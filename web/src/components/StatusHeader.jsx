@@ -13,14 +13,13 @@ const CAUSE_LABELS = {
 
 export function StatusHeader({ status, lastSeen, statusDetail, causeProvisional }) {
   // Calcula status real baseado no tempo desde o último heartbeat
-  const isOnline = useMemo(() => {
-    if (!lastSeen) return false;
-    const now = new Date();
-    const lastSeenDate = new Date(lastSeen);
-    const minutesSince = (now - lastSeenDate) / (1000 * 60);
-    const TIMEOUT_MINUTES = 17;
-    return minutesSince < TIMEOUT_MINUTES;
+  const minutesSinceLastSeen = useMemo(() => {
+    if (!lastSeen) return Infinity;
+    return (Date.now() - new Date(lastSeen).getTime()) / (1000 * 60);
   }, [lastSeen]);
+
+  const isOnline = minutesSinceLastSeen < 17;
+  const isDataStale = minutesSinceLastSeen > 120;
 
   const statusColor = isOnline ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
 
@@ -29,6 +28,7 @@ export function StatusHeader({ status, lastSeen, statusDetail, causeProvisional 
     : 'Desconhecido';
 
   return (
+    <>
     <div className={`relative p-8 rounded-2xl shadow-lg border-2 ${isOnline ? 'border-green-300 bg-gradient-to-br from-green-50 to-green-100' : 'border-red-300 bg-gradient-to-br from-red-50 to-red-100'} flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-500 overflow-hidden`}>
 
       <div className="relative flex items-center gap-4">
@@ -67,5 +67,12 @@ export function StatusHeader({ status, lastSeen, statusDetail, causeProvisional 
         </div>
       </div>
     </div>
+    {isDataStale && (
+      <div className="mt-3 px-4 py-2.5 bg-yellow-50 border border-yellow-300 rounded-xl text-yellow-800 text-sm font-medium flex items-center gap-2">
+        <span>⚠️</span>
+        <span>Dados sem atualização há mais de {isFinite(minutesSinceLastSeen) ? `${Math.floor(minutesSinceLastSeen / 60)} h` : 'um longo período'}. O sistema de coleta pode estar inoperante.</span>
+      </div>
+    )}
+    </>
   );
 }
