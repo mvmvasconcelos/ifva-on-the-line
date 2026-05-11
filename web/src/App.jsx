@@ -106,7 +106,7 @@ function App() {
                       interno_firewall: 'Interno (firewall)',
                       interno_servidor: 'Interno (servidor)',
                       interno_misto:    'Interno (misto)',
-                      unknown:          '—',
+                      unknown:          'Não determinada',
                     };
                     const causeColor = causeRaw.startsWith('externo')
                       ? 'bg-orange-100 text-orange-800'
