@@ -113,9 +113,9 @@ Este documento serve como guia para a construção de um sistema de monitorament
     ```
 - [x] Validar sistema dual (Email + Telegram) em produção.
 
-## ✅ Sistema Completo e Operacional
+## ✅ Sistema v1 Completo e Operacional
 
-O sistema está 100% funcional com:
+O sistema v1 está 100% funcional com:
 - ✅ Detecção automática de quedas
 - ✅ Alertas via e-mail (horário de Brasília)
 - ✅ Alertas via Telegram (instantâneos com formatação Markdown)
@@ -123,3 +123,21 @@ O sistema está 100% funcional com:
 - ✅ Monitoramento de heartbeat com previsões
 - ✅ Histórico completo de incidentes com fallback do watchdog e recuperação robusta de pushes (retry no Actions)
 - ✅ Sistema dual de notificações (Email + Telegram)
+
+---
+
+## Fase 8: Evolução para v2 (Classificação de Causa)
+
+- [x] **Sondas de rede no cliente:** `heartbeat_v2.sh` coleta `gateway_ok`, `internet_ok`, `dns_ok` a cada execução.
+- [x] **Fila persistente no servidor:** Eventos acumulados em `/var/lib/ifva-monitor/queue.jsonl` e enviados em lote (`batch`) no payload.
+- [x] **Número de sequência monotônico:** Campo `seq` para ordenação e rastreabilidade dos eventos.
+- [x] **`data/incidents.json`:** Arquivo dedicado para incidentes (separado do `status.json`). Rotação automática mantém os 200 mais recentes.
+- [x] **Classificação provisional (watchdog):** Ao detectar timeout, classifica a causa com base na última sonda: `interno` (gateway falhou) ou `externo` (gateway ok, internet falhou).
+- [x] **Classificação final (recovery):** Ao receber heartbeat pós-queda, reclassifica o incidente iterando o batch: `interno_servidor` (≤1 amostra), `interno_firewall`, `externo`, `interno_misto`.
+- [x] **Alerta de reclassificação:** Se a causa final diferir da provisional, envia notificação "🔄 RECLASSIFICADO: X → Y" via e-mail e Telegram.
+- [x] **Merge window (20 min):** Watchdog reabre o último incidente se ele terminou há menos de 20 minutos, evitando fragmentação.
+- [x] **Frontend v2:** Dashboard exibe causa da queda (badge colorido no `StatusHeader`) e colunas "Duração", "Causa" e "Estado" na tabela de histórico. Hook `useStatus` busca ambos os JSONs em paralelo.
+- [x] **Systemd timer:** Unidades `ifva-heartbeat.service` + `ifva-heartbeat.timer` instaladas no servidor `128.1.1.49`, disparando a cada 5 minutos com `Persistent=true`.
+- [x] **Credenciais seguras:** Token armazenado em `/etc/ifva-monitor/env` (modo 0600, fora do repositório).
+
+## ✅ Sistema v2 Completo e Operacional

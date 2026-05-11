@@ -1,6 +1,6 @@
 # IFVA On The Line?
 
-[![Status](https://img.shields.io/badge/Status-Concluído-1dfd5c)](https://github.com/mvmvasconcelos/ifva-on-the-line) [![Versão](https://img.shields.io/badge/version-1.5.0-blue.svg)](https://github.com/mvmvasconcelos/ifva-on-the-line) [![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://react.dev/) [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/) [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions) [![Licença](https://img.shields.io/badge/licença-Apache_2.0-green.svg)](https://opensource.org/licenses/Apache-2.0) [![IFSul](https://img.shields.io/badge/IFSul-Venâncio%20Aires-195128)](https://vairao.ifsul.edu.br/)
+[![Status](https://img.shields.io/badge/Status-Concluído-1dfd5c)](https://github.com/mvmvasconcelos/ifva-on-the-line) [![Versão](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/mvmvasconcelos/ifva-on-the-line) [![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://react.dev/) [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/) [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions) [![Licença](https://img.shields.io/badge/licença-Apache_2.0-green.svg)](https://opensource.org/licenses/Apache-2.0) [![IFSul](https://img.shields.io/badge/IFSul-Venâncio%20Aires-195128)](https://vairao.ifsul.edu.br/)
 
 
 ## Sobre o Projeto
@@ -13,16 +13,15 @@ O sistema está acessível em https://mvmvasconcelos.github.io/ifva-on-the-line/
 
 ## Como Funciona
 
-A arquitetura do projeto é baseada em uma abordagem "serverless" utilizando recursos gratuitos do GitHub:
+A arquitetura é baseada numa abordagem *serverless* usando recursos gratuitos do GitHub (v2):
 
-1.  **Origem (No Campus):** Um script simples (`heartbeat.sh` ou similar) rodando em um servidor dentro do campus envia uma requisição HTTP (POST) a cada 15 minutos para a API do GitHub.
+1.  **Origem (No Campus):** O script `heartbeat_v2.sh`, gerenciado por um **systemd timer** (a cada 5 minutos), coleta sondas de rede locais (gateway, internet, DNS), acumula eventos em fila (`/var/lib/ifva-monitor/queue.jsonl`) e envia o lote completo via `repository_dispatch` para o GitHub.
 2.  **Backend (GitHub Actions):**
-    *   O workflow `Receive Heartbeat` recebe cada sinal e executa a lógica principal de detecção:
-        *   Atualiza o `last_seen` e confirma `status: online`.
-        *   Calcula o intervalo desde o sinal anterior. Se o gap for superior a 7 minutos, registra automaticamente um incidente no histórico com a duração calculada.
-        *   Quando o sistema se recupera de um estado offline, registra o fim do incidente com a duração exata da queda.
-    *   O workflow `Watchdog Monitor` roda periodicamente como **fallback**: se nenhum heartbeat chegar por um tempo prolongado, ele detecta a queda em andamento e dispara alertas via e-mail e Telegram.
-3.  **Frontend (Dashboard):** Uma interface web desenvolvida em React, hospedada no GitHub Pages, consome o arquivo JSON via GitHub API para exibir o status atual (Online/Offline) e o histórico de incidentes em tempo real. Os dados podem ser facilmente exportados em formato CSV.
+    *   O workflow `Receive Heartbeat` recebe o lote, atualiza `data/status.json` e `data/incidents.json`:
+        *   Confirma `status: online`, atualiza `last_seen` e armazena os dados de sonda.
+        *   Ao detectar recuperação, fecha o incidente aberto, calcula a duração exata e **classifica a causa** final (`interno_servidor`, `interno_firewall`, `externo`, `interno_misto`) com base nos eventos da fila.
+    *   O workflow `Watchdog Monitor` roda a cada 5 minutos como fallback: detecta ausência de heartbeat, abre um incidente com **causa provisional** (`interno` ou `externo`) baseada na última sonda disponível, e dispara alertas via e-mail e Telegram.
+3.  **Frontend (Dashboard):** Interface React hospedada no GitHub Pages. Consome `status.json` e `incidents.json` em paralelo a cada 30 segundos, exibindo status atual, causa da queda (quando offline), histórico de incidentes com duração e classificação. Suporta exportação CSV.
 
 ## Tecnologias Utilizadas
 
@@ -34,57 +33,39 @@ A arquitetura do projeto é baseada em uma abordagem "serverless" utilizando rec
 
 ## Estrutura do Projeto
 
-*   `.github/workflows`: Contém os arquivos YAML para os workflows do GitHub Actions.
-*   `data/`: Armazena o arquivo `status.json` que atua como banco de dados.
-*   `src/`: Código fonte da aplicação React (Dashboard).
-*   `scripts/`: Scripts auxiliares para configuração no servidor do campus.
+*   `.github/workflows/`: Workflows do GitHub Actions (`receive-heartbeat.yml`, `watchdog.yml`, `deploy-web.yml`).
+*   `data/status.json`: Estado atual do sistema (status, last_seen, sondas, histórico resumido).
+*   `data/incidents.json`: Registro persistente de incidentes com causa, duração e timestamps.
+*   `web/src/`: Código fonte do dashboard React.
+*   `scripts/heartbeat_v2.sh`: Script de heartbeat v2 para instalação no servidor do campus.
+*   `scripts/ifva-heartbeat.service` / `.timer`: Unidades systemd para agendamento automático (a cada 5 minutos) no servidor.
+*   `scripts/process_heartbeat.py`: Lógica de processamento do heartbeat (classificação de causa, gestão de incidentes).
+*   `scripts/watchdog.py`: Lógica do watchdog (detecção de timeout, alertas, reabertura de incidentes).
+*   `scripts/notifier.py`: Envio de alertas via e-mail (SMTP) e Telegram.
 
 ## Configuração
 
-Para replicar este projeto, consulte o arquivo `ROADMAP.md` para um guia passo a passo da implementação, incluindo a configuração de segredos e tokens necessários.
+Para replicar este projeto, consulte o `ROADMAP.md` para o guia completo de implementação e o `scripts/README.md` para instruções de instalação do heartbeat no servidor.
 
-### Configurando Alertas (Email e Telegram)
+### Segredos necessários no GitHub
 
-As configurações de notificação são gerenciadas diretamente no arquivo `data/status.json`:
+Configure em *Settings → Secrets and variables → Actions*:
 
-```json
-{
-  "status": "online",
-  "last_seen": "2026-02-27T10:00:00Z",
-  "history": [],
-  "config": {
-    "alert_emails": [
-      "admin1@example.com",
-      "admin2@example.com"
-    ],
-    "telegram": {
-      "enabled": true,
-      "chat_ids": [
-        "123456789"
-      ]
-    },
-    "email_template": {
-      "subject": "🔴 ALERTA: IFSul Offline",
-      "body": "O sistema IFSul Venâncio Aires está OFFLINE desde {last_seen}.\n\nTempo decorrido: {elapsed_time}\n\nPor favor, verifique a conectividade ou energia do campus."
-    }
-  }
-}
-```
+| Segredo | Descrição |
+|---|---|
+| `PAT_TOKEN` | Personal Access Token com permissão `repo` |
+| `GMAIL_USER` | Endereço Gmail para envio de alertas |
+| `GMAIL_APP_PASSWORD` | Senha de aplicativo do Gmail |
+| `TELEGRAM_BOT_TOKEN` | Token do bot criado via @BotFather |
 
-**Para modificar:**
-1. Edite o arquivo `data/status.json` diretamente no GitHub
-2. **Emails:** Ajuste os destinatários em `config.alert_emails` (array de strings)
-3. **Telegram:** Configure `telegram.enabled` (true/false) e adicione `chat_ids`
-4. **Template:** Personalize o assunto e corpo do email em `config.email_template`
-5. Os placeholders `{last_seen}` e `{elapsed_time}` são substituídos automaticamente
+### Configurando alertas
+
+Os destinatários de e-mail e Telegram são definidos no `data/status.json`, campo `config`. Edite diretamente no GitHub — as mudanças entram em vigor no próximo evento.
 
 **Para obter seu Chat ID do Telegram:**
 1. Crie um bot via [@BotFather](https://t.me/botfather)
-2. Envie `/start` para seu bot
-3. Acesse: `https://api.telegram.org/bot<TOKEN>/getUpdates`
-4. Procure pelo campo `"chat":{"id": 123456789}`
-
-As mudanças entram em vigor imediatamente após o commit.
+2. Acesse: `https://api.telegram.org/bot<TOKEN>/getUpdates` após enviar `/start` para o bot
+3. Copie o valor de `"chat":{"id": ...}`
 
 ## Licença
 
