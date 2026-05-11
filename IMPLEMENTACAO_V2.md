@@ -22,7 +22,7 @@ Objetivo principal de monitoramento:
 - Alerta: disparar em suspeita
 - Compatibilidade retroativa: nao obrigatoria
 - NTP do servidor: confiavel
-- Persistencia local de heartbeat: ainda nao existe, sera adicionada na v2
+- Persistencia local de heartbeat: fila JSONL em /var/lib/ifva-monitor/queue.jsonl
 
 ## 3) Resultado esperado da v2
 
@@ -116,22 +116,29 @@ Apos retorno (final):
 
 ## 7) Plano de execucao (fases)
 
-Fase 1 (iniciar agora, sem quebrar producao):
-- [ ] Aceitar payload v2 no process_heartbeat.py
-- [ ] Gravar v2.last_probe e cause_provisional em status.json
-- [ ] Criar script heartbeat_v2.sh com sonda basica (gateway/internet/dns)
-- [ ] Manter comportamento atual de online/offline para nao quebrar frontend
+Fase 1 (CONCLUIDA - commit 29a6887):
+- [x] Aceitar payload v2 no process_heartbeat.py (le GITHUB_EVENT_PATH)
+- [x] Gravar v2.last_probe e cause_provisional em status.json
+- [x] Criar script heartbeat_v2.sh com sonda de gateway/internet/dns
+- [x] Fila local JSONL com envio em lote (batch) e pending_count
+- [x] Manter comportamento online/offline para nao quebrar frontend
 
-Fase 2:
-- [ ] Criar data/incidents.json
-- [ ] Migrar abertura/fechamento de incidente para estrutura v2
-- [ ] Consolidar intermitencias em janela unica (merge <= 20 min)
-- [ ] Alertas: suspeita, reclassificacao, recuperacao
+Fase 2 (CONCLUIDA - commit b86526f):
+- [x] Criar data/incidents.json como fonte de verdade dos incidentes
+- [x] Migrar abertura/fechamento de incidente para estrutura v2 (state open/closed)
+- [x] Reclassificacao de causa_final no fechamento usando batch de sondas
+- [x] Seed automatico de incidentes legados a partir do history existente
+- [x] project_history_from_incidents: history em status.json espelha incidents.json
+- [x] Alertas de suspeita ja embutidos no watchdog
 
-Fase 3:
-- [ ] Frontend: mostrar causa provisoria/final
-- [ ] Frontend: historico de incidentes v2
-- [ ] Rotacao/reducao de historico para evitar crescimento excessivo
+Fase 3 (EM ANDAMENTO):
+- [x] Frontend: StatusHeader mostra badge de causa provisional quando offline
+- [x] Frontend: tabela de historico com colunas Causa e Estado
+- [x] Frontend: useStatus busca incidents.json em paralelo
+- [ ] Configurar systemd timer no Ubuntu para heartbeat_v2.sh
+- [ ] Merge de incidentes por janela de 20 min (consolidacao de intermitencias)
+- [ ] Alerta de reclassificacao (quando causa_final difere da provisional)
+- [ ] Rotacao de historico no incidents.json (limite de registros antigos)
 
 ## 8) Riscos e mitigacoes
 

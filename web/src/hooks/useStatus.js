@@ -1,32 +1,30 @@
 import { useState, useEffect } from 'react';
 
-// Using raw.githubusercontent.com with a cache-busting query parameter
-// avoids the rigid 60 requests/hour limit of the unauthenticated GitHub API.
-const getApiUrl = () => `https://raw.githubusercontent.com/mvmvasconcelos/ifva-on-the-line/main/data/status.json?t=${Date.now()}`;
+const BASE = 'https://raw.githubusercontent.com/mvmvasconcelos/ifva-on-the-line/main';
+const statusUrl  = () => `${BASE}/data/status.json?t=${Date.now()}`;
+const incidentsUrl = () => `${BASE}/data/incidents.json?t=${Date.now()}`;
+
+async function fetchJson(url) {
+  const res = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+  if (!res.ok) throw new Error(`HTTP ${res.status} em ${url}`);
+  return res.json();
+}
 
 export function useStatus() {
   const [data, setData] = useState(null);
+  const [incidents, setIncidents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(getApiUrl(), {
-          headers: {
-            'Accept': 'application/json'
-          },
-          // Some browsers also respect cache directives:
-          cache: 'no-store'
-        });
-
-        if (!response.ok) {
-          throw new Error('Falha ao carregar dados de status: ' + response.status);
-        }
-
-        const jsonData = await response.json();
-
-        setData(jsonData);
+        const [statusData, incidentData] = await Promise.all([
+          fetchJson(statusUrl()),
+          fetchJson(incidentsUrl()).catch(() => ({ incidents: [] })),
+        ]);
+        setData(statusData);
+        setIncidents(Array.isArray(incidentData?.incidents) ? incidentData.incidents : []);
         setError(null);
       } catch (err) {
         console.error('Erro ao buscar status:', err);
@@ -37,11 +35,9 @@ export function useStatus() {
     }
 
     fetchData();
-
-    // Poll every 30 seconds for more real-time updates
     const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  return { data, loading, error };
+  return { data, incidents, loading, error };
 }

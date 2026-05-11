@@ -11,7 +11,7 @@ import { useStatus } from './hooks/useStatus'
 import { exportHistoryToCSV } from './utils/exportCsv'
 
 function App() {
-  const { data, loading, error } = useStatus()
+  const { data, incidents, loading, error } = useStatus()
 
   if (loading) {
     return (
@@ -34,7 +34,12 @@ function App() {
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
 
         {/* Header Section */}
-        <StatusHeader status={data?.status} lastSeen={data?.last_seen} />
+        <StatusHeader
+          status={data?.status}
+          lastSeen={data?.last_seen}
+          statusDetail={data?.status_detail}
+          causeProvisional={data?.v2?.cause_provisional}
+        />
 
         {/* Two Column Layout for Key Metrics */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
@@ -80,36 +85,60 @@ function App() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data/Hora</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duração Aprox.</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duração</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Causa</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {data?.history?.length === 0 ? (
                   <tr>
-                    <td colSpan="3" className="px-6 py-4 text-center text-sm text-gray-500">
+                    <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">
                       Nenhum incidente registrado.
                     </td>
                   </tr>
                 ) : (
-                  data?.history?.slice(0, 10).map((event, idx) => (
-                    <tr key={idx}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {new Date(event.timestamp).toLocaleString('pt-BR')}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                          {event.type}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {event.duration_minutes > 0
-                          ? formatDurationVerbose(event.duration_minutes)
-                          : <span className="text-orange-400 italic">Em andamento...</span>
-                        }
-                      </td>
-                    </tr>
-                  ))
+                  data?.history?.slice(0, 50).map((event, idx) => {
+                    const causeRaw = event.cause_final || event.cause_provisional || 'unknown';
+                    const causeMap = {
+                      externo:          'Externo',
+                      interno:          'Interno',
+                      interno_firewall: 'Interno (firewall)',
+                      interno_servidor: 'Interno (servidor)',
+                      interno_misto:    'Interno (misto)',
+                      unknown:          '—',
+                    };
+                    const causeColor = causeRaw.startsWith('externo')
+                      ? 'bg-orange-100 text-orange-800'
+                      : causeRaw.startsWith('interno')
+                        ? 'bg-red-100 text-red-800'
+                        : 'bg-gray-100 text-gray-600';
+                    const isOpen = event.state === 'open';
+                    return (
+                      <tr key={idx}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {new Date(event.timestamp).toLocaleString('pt-BR')}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {isOpen
+                            ? <span className="text-orange-400 italic">Em andamento…</span>
+                            : formatDurationVerbose(event.duration_minutes)
+                          }
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${causeColor}`}>
+                            {causeMap[causeRaw] ?? causeRaw}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          {isOpen
+                            ? <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-700">aberto</span>
+                            : <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-700">fechado</span>
+                          }
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

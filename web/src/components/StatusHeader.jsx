@@ -2,7 +2,16 @@
 import { useMemo } from "react";
 import { Wifi, WifiOff } from "lucide-react";
 
-export function StatusHeader({ status, lastSeen }) {
+const CAUSE_LABELS = {
+  externo:           { label: 'Problema externo (internet)',     color: 'bg-orange-100 text-orange-800' },
+  interno:           { label: 'Problema interno',               color: 'bg-red-100 text-red-800' },
+  interno_firewall:  { label: 'Problema interno (firewall)',     color: 'bg-red-100 text-red-800' },
+  interno_servidor:  { label: 'Servidor sem resposta',          color: 'bg-red-100 text-red-800' },
+  interno_misto:     { label: 'Problema interno (misto)',       color: 'bg-red-100 text-red-800' },
+  unknown:           { label: 'Causa em investigação…',         color: 'bg-yellow-100 text-yellow-800' },
+};
+
+export function StatusHeader({ status, lastSeen, statusDetail, causeProvisional }) {
   // Calcula status real baseado no tempo desde o último heartbeat
   const isOnline = useMemo(() => {
     if (!lastSeen) return false;
@@ -42,8 +51,17 @@ export function StatusHeader({ status, lastSeen }) {
       <div className="relative flex flex-col items-end text-right gap-3">
         <div className={`px-6 py-3 rounded-full font-bold uppercase tracking-wider text-sm flex items-center gap-3 ${statusColor} shadow-md transform transition-all hover:scale-105`}>
           <span className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'}`}></span>
-          {isOnline ? "✅ OPERACIONAL" : "🚨 OFFLINE"}
+          {isOnline ? "✅ OPERACIONAL" : statusDetail === 'offline_suspeito' ? '⚠️ SUSPEITO' : "🚨 OFFLINE"}
         </div>
+        {!isOnline && causeProvisional && causeProvisional !== 'unknown' && (() => {
+          const c = CAUSE_LABELS[causeProvisional] || CAUSE_LABELS.unknown;
+          return (
+            <span className={`text-xs font-semibold px-3 py-1 rounded-full ${c.color}`}>{c.label}</span>
+          );
+        })()}
+        {!isOnline && (!causeProvisional || causeProvisional === 'unknown') && (
+          <span className={`text-xs font-semibold px-3 py-1 rounded-full ${CAUSE_LABELS.unknown.color}`}>{CAUSE_LABELS.unknown.label}</span>
+        )}
         <div className="text-sm text-gray-600 flex items-center gap-2 bg-white px-3 py-1.5 rounded-full shadow-sm">
           <span className="font-medium">{formattedDate}</span>
         </div>
