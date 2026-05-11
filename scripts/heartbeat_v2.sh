@@ -110,9 +110,11 @@ EOF_PAYLOAD
 
 HTTP_CODE=$(curl --silent --show-error --output /tmp/ifva_dispatch_response.txt \
   --write-out "%{http_code}" \
-  --tlsv1.2 \
+  --ipv4 \
+  --max-time 30 \
   -X POST \
   -H "Accept: application/vnd.github.v3+json" \
+  -H "Content-Type: application/json" \
   -H "Authorization: token $GITHUB_TOKEN" \
   "$API_URL" \
   -d "$JSON_PAYLOAD")
