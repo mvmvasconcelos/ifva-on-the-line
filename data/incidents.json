@@ -831,7 +831,20 @@
       "cause_provisional": "unknown",
       "cause_final": "interno_firewall",
       "sample_count": 25
+    },
+    {
+      "id": "2026-05-13T10:49:30.125676Z-2026-05-13T11:35:31.018563Z-closed",
+      "timestamp": "2026-05-13T10:49:30.125676Z",
+      "started_at": "2026-05-13T10:49:30.125676Z",
+      "detected_at": "2026-05-13T11:35:31.018563Z",
+      "ended_at": "2026-05-13T11:35:31.018563Z",
+      "state": "closed",
+      "type": "offline_detected",
+      "duration_minutes": 46.0,
+      "cause_provisional": "unknown",
+      "cause_final": "interno_misto",
+      "sample_count": 9
     }
   ],
-  "updated_at": "2026-05-13T10:49:30.125676Z"
+  "updated_at": "2026-05-13T11:35:31.018563Z"
 }
