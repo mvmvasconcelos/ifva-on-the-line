@@ -1,6 +1,6 @@
 {
   "status": "online",
-  "last_seen": "2026-07-08T02:48:39.253214Z",
+  "last_seen": "2026-07-08T02:53:41.459752Z",
   "last_failure": null,
   "history": [
     {
@@ -986,17 +986,17 @@
     "cause_provisional": "unknown",
     "cause_confidence": "low",
     "last_probe": {
-      "timestamp": "2026-07-08T02:48:31Z",
+      "timestamp": "2026-07-08T02:53:32Z",
       "gateway_ok": true,
       "internet_ok": true,
       "dns_ok": true,
       "pending_count": 1,
-      "seq": 16156
+      "seq": 16157
     },
     "pending_count": 1,
     "batch_count": 1,
     "missed_batches": 0,
-    "last_seq": 16156
+    "last_seq": 16157
   },
   "status_detail": "online"
 }
