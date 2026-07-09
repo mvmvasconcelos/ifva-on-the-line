@@ -1442,7 +1442,20 @@
       "cause_provisional": "unknown",
       "cause_final": "unknown",
       "sample_count": 4
+    },
+    {
+      "id": "2026-07-09T12:39:06.935910Z-2026-07-09T12:58:24.384139Z-closed",
+      "timestamp": "2026-07-09T12:39:06.935910Z",
+      "started_at": "2026-07-09T12:39:06.935910Z",
+      "detected_at": "2026-07-09T12:58:24.384139Z",
+      "ended_at": "2026-07-09T12:58:24.384139Z",
+      "state": "closed",
+      "type": "offline_detected",
+      "duration_minutes": 19.3,
+      "cause_provisional": "unknown",
+      "cause_final": "unknown",
+      "sample_count": 4
     }
   ],
-  "updated_at": "2026-07-09T12:39:06.935910Z"
+  "updated_at": "2026-07-09T12:58:24.384139Z"
 }
