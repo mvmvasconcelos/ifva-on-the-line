@@ -1052,5 +1052,6 @@
     "missed_batches": 0,
     "last_seq": 17049
   },
-  "status_detail": "online"
+  "status_detail": "online",
+  "watchdog_pending_since": "2026-07-11T08:21:47.612585Z"
 }
