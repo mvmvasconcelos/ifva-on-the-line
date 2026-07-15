@@ -1085,5 +1085,6 @@
       "error": "curl_error_exit_28"
     }
   },
-  "status_detail": "online"
+  "status_detail": "online",
+  "watchdog_pending_since": "2026-07-15T19:04:38.253925Z"
 }
