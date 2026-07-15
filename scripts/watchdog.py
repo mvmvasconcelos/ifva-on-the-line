@@ -3,7 +3,7 @@ import json
 import os
 import sys
 
-from notifier import get_brasilia_now, send_email, send_telegram
+from notifier import DASHBOARD_URL, get_brasilia_now, send_email, send_telegram
 
 TIMEOUT_MINUTES = int(os.environ.get('TIMEOUT_MINUTES', 10))
 MERGE_WINDOW_MINUTES = 20
@@ -215,7 +215,8 @@ def main():
                 f'Último contato: {last_seen_str}\n'
                 f'Tempo decorrido: {int(minutes_diff)} minutos\n'
                 f'Data do alerta: {brasilia_timestamp} (Horário de Brasília)\n\n'
-                f'Verifique a conexão de internet ou energia no local.'
+                f'Verifique a conexão de internet ou energia no local.\n\n'
+                f'Acompanhe em: {DASHBOARD_URL}'
             )
             send_email(subject, body, alert_emails if alert_emails else None)
 
@@ -225,7 +226,8 @@ def main():
                 telegram_msg = (
                     f'🔴 *ALERTA: IFSul Offline*\n\n'
                     f'O sistema não reporta contato há *{int(minutes_diff)} minutos*.\n'
-                    f'Último visto: {brasilia_time}'
+                    f'Último visto: {brasilia_time}\n\n'
+                    f'Acompanhe em: {DASHBOARD_URL}'
                 )
                 send_telegram(telegram_msg, telegram_config.get('chat_ids'))
         else:

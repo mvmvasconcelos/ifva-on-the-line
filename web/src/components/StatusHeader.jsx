@@ -11,14 +11,19 @@ const CAUSE_LABELS = {
   unknown:           { label: 'Causa em investigação…',         color: 'bg-yellow-100 text-yellow-800' },
 };
 
-export function StatusHeader({ status, lastSeen, statusDetail, causeProvisional }) {
+const UPLINK_LABELS = {
+  lan:  { label: 'LAN',  color: 'bg-blue-100 text-blue-800' },
+  wifi: { label: 'WiFi', color: 'bg-purple-100 text-purple-800' },
+};
+
+export function StatusHeader({ status, lastSeen, statusDetail, causeProvisional, activeUplink }) {
   // Calcula status real baseado no tempo desde o último heartbeat
   const minutesSinceLastSeen = useMemo(() => {
     if (!lastSeen) return Infinity;
     return (Date.now() - new Date(lastSeen).getTime()) / (1000 * 60);
   }, [lastSeen]);
 
-  const isOnline = minutesSinceLastSeen < 17;
+  const isOnline = minutesSinceLastSeen < 30;
   const isDataStale = minutesSinceLastSeen > 120;
 
   const statusColor = isOnline ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
@@ -61,6 +66,15 @@ export function StatusHeader({ status, lastSeen, statusDetail, causeProvisional 
         })()}
         {!isOnline && (!causeProvisional || causeProvisional === 'unknown') && (
           <span className={`text-xs font-semibold px-3 py-1 rounded-full ${CAUSE_LABELS.unknown.color}`}>{CAUSE_LABELS.unknown.label}</span>
+        )}
+        {(activeUplink === 'lan' || activeUplink === 'wifi') && (() => {
+          const u = UPLINK_LABELS[activeUplink];
+          return (
+            <span className={`text-xs font-semibold px-3 py-1 rounded-full ${u.color}`}>Uplink: {u.label}</span>
+          );
+        })()}
+        {causeProvisional === 'interno_firewall' && activeUplink === 'wifi' && (
+          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-800">✅ confirmado vivo via WiFi</span>
         )}
         <div className="text-sm text-gray-600 flex items-center gap-2 bg-white px-3 py-1.5 rounded-full shadow-sm">
           <span className="font-medium">{formattedDate}</span>

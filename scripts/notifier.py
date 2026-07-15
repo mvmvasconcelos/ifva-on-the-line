@@ -6,6 +6,8 @@ from email.message import EmailMessage
 import urllib.request
 import urllib.parse
 
+DASHBOARD_URL = "https://mvmvasconcelos.github.io/ifva-on-the-line/"
+
 def send_telegram(message, chat_ids=None):
     """Envia uma mensagem via Telegram usando a API de Bot."""
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')

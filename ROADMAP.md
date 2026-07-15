@@ -39,7 +39,7 @@ Este documento serve como guia para a construção de um sistema de monitorament
 
 **Observação:** Para modificar os destinatários de e-mail/Telegram ou personalizar templates, edite diretamente o arquivo `data/status.json` no GitHub.
 
-## Fase 3: Script do Firewall (Lado do Campus)
+## Fase 3: Script do Servidor (Lado do Campus)
 
 - [x] Criar script Bash `heartbeat.sh` para o Linux do campus:
     - Deve enviar um POST para a API do GitHub (`repository_dispatch`).
@@ -154,3 +154,15 @@ O sistema v1 está 100% funcional com:
 - [x] **#8 — Aviso de dados obsoletos no dashboard:** `StatusHeader.jsx` exibe banner amarelo quando `last_seen` é mais antigo que **2 horas**, sinalizando possível falha no sistema de coleta.
 
 ## ✅ Sistema v2.1 Completo e Operacional
+
+---
+
+## Fase 10: Consciência de Failover WiFi
+
+O servidor do campus (128.1.1.49) ganhou uma segunda rota de saída (WiFi `MCV-016`), ativada automaticamente pelo sistema operacional quando a LAN/firewall da escola fica indisponível por tempo sustentado. Isso não é parte deste repositório, mas afeta diretamente como o heartbeat se comporta durante uma queda. Detalhes técnicos completos em [`scripts/lan-failover.md`](./scripts/lan-failover.md).
+
+- [x] Sonda de `active_uplink` (`lan`/`wifi`) e `github_api_ok` no payload do `heartbeat_v2.sh`, expostos em `status.json` como metadados de confiança — sem criar nova categoria de `cause_final` (a taxonomia atual já classifica `gateway_ok=false` corretamente como `interno_firewall`).
+- [x] Indicador no dashboard (`StatusHeader.jsx`) para o modo de rede ativo no servidor, com selo "confirmado vivo via WiFi" durante queda `interno_firewall`.
+- [ ] Avaliar alerta informativo (separado do alerta de offline) para entrada/saída do modo fallback.
+- [ ] Validar na prática o alinhamento de tempos entre o gatilho do failover (~10 min) e as janelas de detecção do watchdog (agora ~30-35 min, após o ajuste de `TIMEOUT_MINUTES`).
+- [ ] Teste de failover real agendado e executado no servidor do campus (gate manual, fora do ciclo de código).

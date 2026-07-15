@@ -23,6 +23,8 @@ A arquitetura é baseada numa abordagem *serverless* usando recursos gratuitos d
     *   O workflow `Watchdog Monitor` roda a cada 5 minutos como fallback: detecta ausência de heartbeat, abre um incidente com **causa provisional** (`interno` ou `externo`) baseada na última sonda disponível, e dispara alertas via e-mail e Telegram.
 3.  **Frontend (Dashboard):** Interface React hospedada no GitHub Pages. Consome `status.json` e `incidents.json` em paralelo a cada 30 segundos, exibindo status atual, causa da queda (quando offline), histórico de incidentes com duração e classificação. Suporta exportação CSV.
 
+> **Resiliência de rede no servidor:** o host do campus agora tem uma segunda interface de rede (WiFi) configurada como fallback automático caso a LAN/firewall da escola fique indisponível. Isso muda o comportamento das sondas do heartbeat durante uma queda de LAN — detalhes e adaptações sugeridas em [`scripts/lan-failover.md`](./scripts/lan-failover.md).
+
 ## Tecnologias Utilizadas
 
 *   **Backend:** GitHub Actions (Automação e Agendamento)

@@ -30,7 +30,7 @@ jobs:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           ADMIN_EMAIL: ${{ secrets.GMAIL_USER }}
-          TIMEOUT_MINUTES: "17"
+          TIMEOUT_MINUTES: "30"
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/scripts
           python scripts/watchdog.py

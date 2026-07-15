@@ -3,9 +3,9 @@ import json
 import os
 import sys
 
-from notifier import get_brasilia_now, send_email, send_telegram
+from notifier import DASHBOARD_URL, get_brasilia_now, send_email, send_telegram
 
-TIMEOUT_MINUTES = 17
+TIMEOUT_MINUTES = 30
 JSON_PATH = 'data/status.json'
 INCIDENTS_PATH = 'data/incidents.json'
 HISTORY_LIMIT = 200
@@ -210,6 +210,8 @@ def update_v2_fields(data, payload, batch_events):
         'gateway_ok': probe.get('gateway_ok'),
         'internet_ok': probe.get('internet_ok'),
         'dns_ok': probe.get('dns_ok'),
+        'active_uplink': probe.get('active_uplink'),
+        'github_api_ok': probe.get('github_api_ok'),
         'pending_count': payload.get('pending_count', 0),
         'seq': payload.get('seq')
     }
@@ -320,7 +322,8 @@ def main():
                     f"A queda não havia sido capturada pelo watchdog original.\n"
                     f"Aproximadamente {int(gap_minutes)} minutos offline.\n"
                     f"Último contato antes da queda: {last_seen_str}\n"
-                    f"Voltou em: {now_brasilia.strftime('%d/%m/%Y às %H:%M:%S')} (Horário de Brasília)\n"
+                    f"Voltou em: {now_brasilia.strftime('%d/%m/%Y às %H:%M:%S')} (Horário de Brasília)\n\n"
+                    f"Acompanhe em: {DASHBOARD_URL}\n"
                 )
                 send_email(subject, body, alert_emails if alert_emails else None)
 
@@ -329,7 +332,8 @@ def main():
                     telegram_msg = (
                         f"✅ *RECUPERADO: IFSul Online*\n\n"
                         f"O sistema voltou após uma queda de *{int(gap_minutes)} minutos*.\n"
-                        f"Voltou em: {now_brasilia.strftime('%H:%M:%S')}"
+                        f"Voltou em: {now_brasilia.strftime('%H:%M:%S')}\n\n"
+                        f"Acompanhe em: {DASHBOARD_URL}"
                     )
                     send_telegram(telegram_msg, telegram_config.get('chat_ids'))
 
@@ -370,7 +374,8 @@ def main():
                         f'Causa provisória: {label_prev}\n'
                         f'Causa final:      {label_final}\n'
                         f'Duração da queda: {int(duration_minutes)} minutos\n'
-                        f'Voltou em: {now_brasilia_rc.strftime("%d/%m/%Y às %H:%M:%S")} (Brasília)\n'
+                        f'Voltou em: {now_brasilia_rc.strftime("%d/%m/%Y às %H:%M:%S")} (Brasília)\n\n'
+                        f'Acompanhe em: {DASHBOARD_URL}\n'
                     )
                     send_email(subject, body, alert_emails if alert_emails else None)
                     telegram_config = data.get('config', {}).get('telegram', {})
@@ -381,7 +386,8 @@ def main():
                             f'Causa da queda corrigida:\n'
                             f'Antes: _{label_prev}_\n'
                             f'Agora: *{label_final}*\n'
-                            f'Voltou às: {brasilia_rc_time}'
+                            f'Voltou às: {brasilia_rc_time}\n\n'
+                            f'Acompanhe em: {DASHBOARD_URL}'
                         )
                         send_telegram(telegram_msg, telegram_config.get('chat_ids'))
 

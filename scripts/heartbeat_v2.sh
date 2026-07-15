@@ -12,6 +12,8 @@
 # - STATE_DIR (padrao: /var/lib/ifva-monitor)
 # - SEQ_FILE (padrao: $STATE_DIR/seq)
 # - QUEUE_FILE (padrao: $STATE_DIR/queue.jsonl)
+# - LAN_IFACE (padrao: eno1)
+# - WIFI_IFACE (padrao: wlp1s2)
 
 set -u
 
@@ -22,6 +24,8 @@ DNS_TARGET="${DNS_TARGET:-github.com}"
 STATE_DIR="${STATE_DIR:-/var/lib/ifva-monitor}"
 SEQ_FILE="${SEQ_FILE:-$STATE_DIR/seq}"
 QUEUE_FILE="${QUEUE_FILE:-$STATE_DIR/queue.jsonl}"
+LAN_IFACE="${LAN_IFACE:-eno1}"
+WIFI_IFACE="${WIFI_IFACE:-wlp1s2}"
 
 if [[ -z "${GITHUB_TOKEN:-}" || -z "${GITHUB_OWNER:-}" || -z "${GITHUB_REPO:-}" ]]; then
   echo "Erro: configure GITHUB_TOKEN, GITHUB_OWNER e GITHUB_REPO." >&2
@@ -59,9 +63,34 @@ else
   DNS_OK=false
 fi
 
+# Deteccao de uplink ativo (LAN vs WiFi) via rota real para o alvo de internet.
+# Nao deve travar o script se "ip route" falhar ou vier em formato inesperado.
+ROUTE_OUTPUT="$(ip route get "$INTERNET_TARGET" 2>/dev/null || true)"
+ACTUAL_IFACE="$(printf '%s\n' "$ROUTE_OUTPUT" | grep -oE 'dev [^ ]+' | head -1 | awk '{print $2}')"
+
+if [[ -z "$ACTUAL_IFACE" ]]; then
+  ACTIVE_UPLINK="unknown"
+elif [[ "$ACTUAL_IFACE" == "$LAN_IFACE" ]]; then
+  ACTIVE_UPLINK="lan"
+elif [[ "$ACTUAL_IFACE" == "$WIFI_IFACE" ]]; then
+  ACTIVE_UPLINK="wifi"
+else
+  ACTIVE_UPLINK="unknown"
+fi
+
+# Sonda adicional de alcance a api.github.com. Qualquer resposta HTTP real
+# (2xx/3xx/401/403) prova que a conexao chegou; so timeout/erro de conexao e false.
+GITHUB_API_HTTP_CODE="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 https://api.github.com 2>/dev/null)"
+GITHUB_API_CURL_EXIT=$?
+if [[ $GITHUB_API_CURL_EXIT -eq 0 && "$GITHUB_API_HTTP_CODE" =~ ^(2[0-9]{2}|3[0-9]{2}|401|403)$ ]]; then
+  GITHUB_API_OK=true
+else
+  GITHUB_API_OK=false
+fi
+
 TS="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 EVENT_LINE=$(cat <<EOF_EVENT
-{"ts":"$TS","seq":$SEQ,"probe":{"gateway_ok":$GATEWAY_OK,"internet_ok":$INTERNET_OK,"dns_ok":$DNS_OK}}
+{"ts":"$TS","seq":$SEQ,"probe":{"gateway_ok":$GATEWAY_OK,"internet_ok":$INTERNET_OK,"dns_ok":$DNS_OK,"active_uplink":"$ACTIVE_UPLINK","github_api_ok":$GITHUB_API_OK}}
 EOF_EVENT
 )
 
@@ -107,7 +136,9 @@ JSON_PAYLOAD=$(cat <<EOF_PAYLOAD
     "probe": {
       "gateway_ok": $GATEWAY_OK,
       "internet_ok": $INTERNET_OK,
-      "dns_ok": $DNS_OK
+      "dns_ok": $DNS_OK,
+      "active_uplink": "$ACTIVE_UPLINK",
+      "github_api_ok": $GITHUB_API_OK
     },
     "batch": $QUEUE_JSON
   }
@@ -125,6 +156,7 @@ HTTP_CODE=$(curl --silent --show-error --output /tmp/ifva_dispatch_response.txt 
   -H "Authorization: token $GITHUB_TOKEN" \
   "$API_URL" \
   -d "$JSON_PAYLOAD")
+CURL_EXIT=$?
 
 if [[ "$HTTP_CODE" = "204" ]]; then
   : > "$QUEUE_FILE"
@@ -137,6 +169,38 @@ if [[ "$HTTP_CODE" = "204" ]]; then
   fi
   exit 0
 fi
+
+# Dispatch falhou: persiste o diagnostico na ultima linha ja gravada em
+# QUEUE_FILE para este ciclo, para que o proximo lote inclua o erro.
+if [[ $CURL_EXIT -ne 0 ]]; then
+  DELIVERY_ERROR="curl_error_exit_${CURL_EXIT}"
+else
+  DELIVERY_ERROR="$HTTP_CODE"
+fi
+
+python3 - "$QUEUE_FILE" "$DELIVERY_ERROR" <<'PY' 2>/dev/null || true
+import json
+import pathlib
+import sys
+
+queue_file = pathlib.Path(sys.argv[1])
+delivery_error = sys.argv[2]
+
+if queue_file.exists():
+    lines = queue_file.read_text().splitlines()
+    for i in range(len(lines) - 1, -1, -1):
+        line = lines[i].strip()
+        if not line:
+            continue
+        try:
+            obj = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        obj["delivery_error"] = delivery_error
+        lines[i] = json.dumps(obj, separators=(',', ':'))
+        queue_file.write_text("\n".join(lines) + "\n")
+        break
+PY
 
 echo "Falha ao enviar heartbeat v2. HTTP=$HTTP_CODE" >&2
 cat /tmp/ifva_dispatch_response.txt >&2

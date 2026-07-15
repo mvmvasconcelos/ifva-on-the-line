@@ -71,3 +71,6 @@ Exemplo PowerShell para testes locais no Windows.
 
 ### heartbeat.sh / heartbeat.ps1
 Nomes legados citados na documentação antiga. Use os exemplos acima ou o `heartbeat_v2.sh`.
+
+### lan-failover.md
+Documentação da camada de failover LAN → WiFi configurada no servidor do campus (fora deste repositório), incluindo por que ela afeta a classificação de causa do heartbeat e as adaptações sugeridas para o `heartbeat_v2.sh`/`process_heartbeat.py`. Ver [`lan-failover.md`](./lan-failover.md).

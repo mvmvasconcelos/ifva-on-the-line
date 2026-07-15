@@ -39,6 +39,7 @@ function App() {
           lastSeen={data?.last_seen}
           statusDetail={data?.status_detail}
           causeProvisional={data?.v2?.cause_provisional}
+          activeUplink={data?.v2?.last_probe?.active_uplink}
         />
 
         {/* Two Column Layout for Key Metrics */}

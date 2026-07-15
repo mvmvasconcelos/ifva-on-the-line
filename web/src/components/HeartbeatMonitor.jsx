@@ -44,7 +44,7 @@ export function HeartbeatMonitor({ lastSeen, status }) {
     // Health indicator
     let health = 'healthy'
     let pulseClass = 'animate-pulse-slow'
-    if (status === 'offline' || diffMinutes >= 17) {
+    if (status === 'offline' || diffMinutes >= 30) {
       health = 'critical'
       pulseClass = 'animate-pulse-fast'
     } else if (diffMinutes >= 15) {
@@ -152,7 +152,7 @@ export function HeartbeatMonitor({ lastSeen, status }) {
         <div className="mt-4 pt-4 border-t border-gray-100">
           <div className="text-xs text-gray-500">
             <strong>Intervalo normal:</strong> Heartbeat a cada 15 minutos<br />
-            <strong>Timeout:</strong> Alerta após 17 minutos sem sinal
+            <strong>Timeout:</strong> Alerta após 30 minutos sem sinal
           </div>
         </div>
       </div>
