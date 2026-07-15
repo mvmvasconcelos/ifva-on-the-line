@@ -196,6 +196,16 @@ def project_history_from_incidents(incidents):
     return history[:HISTORY_LIMIT]
 
 
+def latest_delivery_error(batch_events):
+    for event in reversed(batch_events):
+        if isinstance(event, dict) and event.get('delivery_error'):
+            return {
+                'ts': event.get('ts'),
+                'error': event.get('delivery_error'),
+            }
+    return None
+
+
 def update_v2_fields(data, payload, batch_events):
     if 'v2' not in data or not isinstance(data['v2'], dict):
         data['v2'] = {}
@@ -217,6 +227,7 @@ def update_v2_fields(data, payload, batch_events):
     }
     data['v2']['pending_count'] = payload.get('pending_count', 0)
     data['v2']['batch_count'] = len(batch_events)
+    data['v2']['last_delivery_error'] = latest_delivery_error(batch_events)
     data['status_detail'] = 'online'
 
     # Detecta gap de sequência (eventos da fila que não chegaram ao GitHub)
