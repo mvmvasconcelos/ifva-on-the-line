@@ -1,10 +1,13 @@
 // web/src/components/UptimeStats.jsx
 import { useMemo } from 'react'
 import { formatDurationVerbose } from '../utils/format'
+import { filterRelevantHistory } from '../utils/history'
 
 export function UptimeStats({ history, lastSeen }) {
   const stats = useMemo(() => {
-    if (!history || history.length === 0) {
+    const relevantHistory = filterRelevantHistory(history)
+
+    if (!relevantHistory || relevantHistory.length === 0) {
       return {
         uptimePercent: 100,
         totalIncidents: 0,
@@ -27,7 +30,7 @@ export function UptimeStats({ history, lastSeen }) {
     let minDuration = Infinity
 
     // Iterate over all incidents to properly account for ongoing ones from previous months
-    history.forEach(event => {
+    relevantHistory.forEach(event => {
       const eventStart = new Date(event.timestamp)
       let eventEnd = now
       let isOngoing = false

@@ -10,6 +10,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { filterRelevantHistory } from '../utils/history';
 
 ChartJS.register(
   CategoryScale,
@@ -28,6 +29,8 @@ export function IncidentsChart({ history }) {
     return `${year}-${month}-${day}`;
   };
 
+  const relevantHistory = filterRelevantHistory(history);
+
   // Aggregate incidents by date (last 7 days, local time)
   const last7Days = [...Array(7)].map((_, i) => {
     const d = new Date();
@@ -35,7 +38,7 @@ export function IncidentsChart({ history }) {
     return formatDateLocal(d);
   }).reverse();
 
-  const incidentsByDate = history.reduce((acc, curr) => {
+  const incidentsByDate = relevantHistory.reduce((acc, curr) => {
     const d = new Date(curr.timestamp);
     const date = formatDateLocal(d);
     acc[date] = (acc[date] || 0) + 1;

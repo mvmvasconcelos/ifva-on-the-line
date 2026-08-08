@@ -1,11 +1,13 @@
 // web/src/components/StatsGrid.jsx
 import { Clock, Activity, WifiOff } from "lucide-react";
 import { tempoRelativoVerbose, formatDateTimeShort } from "../utils/format";
+import { filterRelevantHistory } from "../utils/history";
 
 export function StatsGrid({ history, lastSeen }) {
-  const totalIncidents = history?.length || 0;
+  const relevantHistory = filterRelevantHistory(history);
+  const totalIncidents = relevantHistory.length;
 
-  const lastIncident = history && history.length > 0 ? history[0] : null;
+  const lastIncident = relevantHistory.length > 0 ? relevantHistory[0] : null;
   const timeSinceLastIncident = lastIncident
     ? tempoRelativoVerbose(lastIncident.timestamp)
     : "Nenhum registro";
