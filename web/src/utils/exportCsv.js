@@ -1,11 +1,14 @@
+import { filterRelevantHistory } from './history.js';
+
 export function exportHistoryToCSV(history) {
-    if (!history || history.length === 0) return;
+    const relevantHistory = filterRelevantHistory(history || []);
+    if (!relevantHistory || relevantHistory.length === 0) return;
 
     // Add BOM for better Excel support with UTF-8
     const BOM = '\uFEFF';
     const headers = ['Data/Hora', 'Tipo', 'Duração (Minutos)'];
 
-    const rows = history.map(event => {
+    const rows = relevantHistory.map(event => {
         const dateStr = new Date(event.timestamp).toLocaleString('pt-BR');
         const type = event.type;
         const duration = event.duration_minutes || '0 (Em andamento)';

@@ -9,9 +9,11 @@ import { formatDurationVerbose } from './utils/format'
 import { HeartbeatMonitor } from './components/HeartbeatMonitor'
 import { useStatus } from './hooks/useStatus'
 import { exportHistoryToCSV } from './utils/exportCsv'
+import { filterRelevantHistory } from './utils/history'
 
 function App() {
   const { data, incidents, loading, error } = useStatus()
+  const relevantHistory = filterRelevantHistory(data?.history || [])
 
   if (loading) {
     return (
@@ -75,7 +77,7 @@ function App() {
             <h3 className="text-lg font-semibold text-gray-900">Histórico de Eventos</h3>
             <button
               onClick={() => exportHistoryToCSV(data?.history)}
-              disabled={!data?.history || data.history.length === 0}
+              disabled={relevantHistory.length === 0}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Exportar Planilha (CSV)
@@ -92,14 +94,14 @@ function App() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {data?.history?.length === 0 ? (
+                {relevantHistory.length === 0 ? (
                   <tr>
                     <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">
                       Nenhum incidente registrado.
                     </td>
                   </tr>
                 ) : (
-                  data?.history?.slice(0, 50).map((event, idx) => {
+                  relevantHistory.slice(0, 50).map((event, idx) => {
                     const causeRaw = event.cause_final || event.cause_provisional || 'unknown';
                     const causeMap = {
                       externo:          'Externo',
