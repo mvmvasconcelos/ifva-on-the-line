@@ -1,8 +1,17 @@
 {
   "status": "online",
-  "last_seen": "2026-08-26T14:59:44.986041Z",
+  "last_seen": "2026-08-26T16:09:26.828677Z",
   "last_failure": null,
   "history": [
+    {
+      "timestamp": "2026-08-26T14:59:44.986041Z",
+      "type": "offline_detected",
+      "duration_minutes": 69.7,
+      "cause_provisional": "unknown",
+      "cause_final": "interno_servidor",
+      "state": "closed",
+      "sample_count": 1
+    },
     {
       "timestamp": "2026-08-11T14:21:33.174822Z",
       "type": "offline_detected",
@@ -1139,21 +1148,20 @@
     "cause_provisional": "unknown",
     "cause_confidence": "low",
     "last_probe": {
-      "timestamp": "2026-08-26T14:58:35Z",
+      "timestamp": "2026-08-26T15:49:26Z",
       "gateway_ok": true,
       "internet_ok": true,
       "dns_ok": true,
       "active_uplink": "lan",
       "github_api_ok": true,
       "pending_count": 1,
-      "seq": 30141
+      "seq": 30151
     },
     "pending_count": 1,
     "batch_count": 1,
-    "missed_batches": 0,
-    "last_seq": 30141,
+    "missed_batches": 9,
+    "last_seq": 30151,
     "last_delivery_error": null
   },
-  "status_detail": "online",
-  "watchdog_pending_since": "2026-08-26T15:52:15.411022Z"
+  "status_detail": "online"
 }
