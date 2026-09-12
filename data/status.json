@@ -1,8 +1,17 @@
 {
-  "status": "online",
+  "status": "offline",
   "last_seen": "2026-09-12T10:15:08.924355Z",
   "last_failure": null,
   "history": [
+    {
+      "timestamp": "2026-09-12T10:15:08.924355Z",
+      "type": "offline_detected",
+      "duration_minutes": 0,
+      "cause_provisional": "unknown",
+      "cause_final": null,
+      "state": "open",
+      "sample_count": 0
+    },
     {
       "timestamp": "2026-08-26T14:59:44.986041Z",
       "type": "offline_detected",
@@ -1163,6 +1172,5 @@
     "last_seq": 34887,
     "last_delivery_error": null
   },
-  "status_detail": "online",
-  "watchdog_pending_since": "2026-09-12T13:07:32.559357Z"
+  "status_detail": "offline_suspeito"
 }
