@@ -1630,14 +1630,14 @@
       "timestamp": "2026-09-12T10:15:08.924355Z",
       "started_at": "2026-09-12T10:15:08.924355Z",
       "detected_at": "2026-09-12T16:15:59.385221Z",
-      "ended_at": null,
-      "state": "open",
+      "ended_at": "2026-09-14T16:26:13.631759Z",
+      "state": "closed",
       "type": "offline_detected",
-      "duration_minutes": 0,
+      "duration_minutes": 3251.1,
       "cause_provisional": "unknown",
-      "cause_final": null,
-      "sample_count": 0
+      "cause_final": "interno_servidor",
+      "sample_count": 1
     }
   ],
-  "updated_at": "2026-09-12T16:15:59.385221Z"
+  "updated_at": "2026-09-14T16:26:13.631759Z"
 }
