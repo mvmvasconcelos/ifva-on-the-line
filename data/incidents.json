@@ -1656,14 +1656,14 @@
       "timestamp": "2026-10-02T08:15:53.943299Z",
       "started_at": "2026-10-02T08:15:53.943299Z",
       "detected_at": "2026-10-02T15:24:49.164447Z",
-      "ended_at": null,
-      "state": "open",
+      "ended_at": "2026-10-02T20:17:37.013249Z",
+      "state": "closed",
       "type": "offline_detected",
-      "duration_minutes": 0,
+      "duration_minutes": 721.7,
       "cause_provisional": "unknown",
-      "cause_final": null,
-      "sample_count": 0
+      "cause_final": "interno_servidor",
+      "sample_count": 1
     }
   ],
-  "updated_at": "2026-10-02T15:24:49.164447Z"
+  "updated_at": "2026-10-02T20:17:37.013249Z"
 }
