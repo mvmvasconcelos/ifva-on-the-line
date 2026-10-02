@@ -1181,5 +1181,6 @@
     "last_seq": 39836,
     "last_delivery_error": null
   },
-  "status_detail": "online"
+  "status_detail": "online",
+  "watchdog_pending_since": "2026-10-02T08:56:35.437755Z"
 }
