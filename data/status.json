@@ -1,6 +1,6 @@
 {
   "status": "online",
-  "last_seen": "2026-10-02T03:28:28.630396Z",
+  "last_seen": "2026-10-02T03:33:40.048151Z",
   "last_failure": null,
   "history": [
     {
@@ -1166,19 +1166,19 @@
     "cause_provisional": "unknown",
     "cause_confidence": "low",
     "last_probe": {
-      "timestamp": "2026-10-02T03:28:21Z",
+      "timestamp": "2026-10-02T03:33:28Z",
       "gateway_ok": true,
       "internet_ok": true,
       "dns_ok": true,
       "active_uplink": "lan",
       "github_api_ok": true,
       "pending_count": 1,
-      "seq": 39779
+      "seq": 39780
     },
     "pending_count": 1,
     "batch_count": 1,
     "missed_batches": 0,
-    "last_seq": 39779,
+    "last_seq": 39780,
     "last_delivery_error": null
   },
   "status_detail": "online"
