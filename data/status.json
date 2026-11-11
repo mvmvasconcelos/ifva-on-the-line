@@ -1,8 +1,17 @@
 {
   "status": "online",
-  "last_seen": "2026-11-11T20:16:09.271321Z",
+  "last_seen": "2026-11-11T20:58:28.999141Z",
   "last_failure": null,
   "history": [
+    {
+      "timestamp": "2026-11-11T20:16:09.271321Z",
+      "type": "offline_detected",
+      "duration_minutes": 42.3,
+      "cause_provisional": "unknown",
+      "cause_final": "interno_servidor",
+      "state": "closed",
+      "sample_count": 1
+    },
     {
       "timestamp": "2026-11-09T18:02:18.465274Z",
       "type": "offline_detected",
@@ -1193,19 +1202,19 @@
     "cause_provisional": "unknown",
     "cause_confidence": "low",
     "last_probe": {
-      "timestamp": "2026-11-11T20:15:57Z",
+      "timestamp": "2026-11-11T20:56:24Z",
       "gateway_ok": true,
       "internet_ok": true,
       "dns_ok": true,
       "active_uplink": "lan",
       "github_api_ok": true,
       "pending_count": 1,
-      "seq": 51146
+      "seq": 51154
     },
     "pending_count": 1,
     "batch_count": 1,
-    "missed_batches": 0,
-    "last_seq": 51146,
+    "missed_batches": 7,
+    "last_seq": 51154,
     "last_delivery_error": null
   },
   "status_detail": "online"
