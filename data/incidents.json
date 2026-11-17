@@ -1702,7 +1702,20 @@
       "cause_provisional": "unknown",
       "cause_final": "interno_servidor",
       "sample_count": 1
+    },
+    {
+      "id": "2026-11-17T20:10:37.334193Z-2026-11-17T20:46:16.366312Z-closed",
+      "timestamp": "2026-11-17T20:10:37.334193Z",
+      "started_at": "2026-11-17T20:10:37.334193Z",
+      "detected_at": "2026-11-17T20:46:16.366312Z",
+      "ended_at": "2026-11-17T20:46:16.366312Z",
+      "state": "closed",
+      "type": "offline_detected",
+      "duration_minutes": 35.7,
+      "cause_provisional": "unknown",
+      "cause_final": "interno_misto",
+      "sample_count": 7
     }
   ],
-  "updated_at": "2026-11-17T20:10:37.334193Z"
+  "updated_at": "2026-11-17T20:46:16.366312Z"
 }
